@@ -21,6 +21,7 @@ import axiosInstance from '../services/api';
 import ProductByCategory from '@/components/comps/ProductByCategory';
 import { Description } from '@radix-ui/react-toast';
 import { toast } from '@/components/ui/use-toast';
+import Image from 'next/image';
 
 const Page = () => {
     const router = useRouter(); // next-navigation
@@ -174,7 +175,7 @@ const Page = () => {
                                             </label>}
                                             {imagePreview && (
                                                 <div className="mt-4">
-                                                    <img
+                                                    <Image
                                                         src={imagePreview}
                                                         alt="Image Preview"
                                                         className="w-50 h-50 object-cover rounded-md"

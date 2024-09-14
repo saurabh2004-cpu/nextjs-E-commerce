@@ -5,6 +5,8 @@ import axiosInstance from '@/app/(frontend)/services/api';
 import { useRouter } from 'next/navigation';
 import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 
 
 
@@ -26,6 +28,8 @@ interface WishlistItem {
 
 const ListWishlist = () => {
     const [wishlist, setWishlist] = useState<WishlistItem[]>([]); // Set the wishlist type
+    const session =useSession()
+    const user =session.user
 
     const router = useRouter();
 
@@ -88,7 +92,7 @@ const ListWishlist = () => {
                     >
                         <div className="flex items-center space-x-4" onClick={() => handleCardClick(product.product._id)}>
                             <div className="w-16 h-16 bg-gray-100 flex items-center justify-center rounded-md">
-                                <img
+                                <Image
                                     src={product.product.imageUrl}
                                     alt={product.product.name}
                                     className="w-full h-full object-cover rounded-md"

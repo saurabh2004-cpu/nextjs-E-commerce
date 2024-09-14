@@ -6,6 +6,7 @@ import SellerFooter from '@/components/footer/SellerFooter';
 import { useRouter } from 'next/navigation';
 import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
+import Image from 'next/image';
 
 interface UserData {
     _id: string;
@@ -104,20 +105,20 @@ const SellerProfile = () => {
         if (userId) {
             fetchProducts();
         }
-    }, [userId]);
+    }, []);
 
     useEffect(() => {
         if (userId) {
             fetchFeaturedProducts();
         }
-    }, [userId]);
+    }, []);
 
 
     // Function to render the user avatar
     const renderUserAvatar = () => {
         if (userData?.profilePicture) {
             return (
-                <img
+                <Image
                     src={userData.profilePicture}
                     alt="Seller Profile"
                     className="w-24 h-24 rounded-full object-cover mr-6"
@@ -244,7 +245,7 @@ const SellerProfile = () => {
                                     className="w-48 border border-gray-200 rounded-lg overflow-hidden shadow-md bg-white"
                                     onClick={() => handleCardClick(product._id)}
                                 >
-                                    <img
+                                    <Image
                                         src={product.imageUrl || '/product.jpg'}
                                         alt={product.name}
                                         className="w-full h-48 object-cover"
@@ -280,7 +281,7 @@ const SellerProfile = () => {
                                     className="w-48 border border-gray-200 rounded-lg overflow-hidden shadow-md bg-white"
                                     onClick={() => handleCardClick(product._id)}
                                 >
-                                    <img
+                                    <Image
                                         src={product.imageUrl || '/product.jpg'}
                                         alt={product.name}
                                         className="w-full h-48 object-cover"

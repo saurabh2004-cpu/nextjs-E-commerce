@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
+import Image from 'next/image'
 
 interface Product {
     name: string;
@@ -167,7 +168,7 @@ const Page = () => {
                     {cartItems.map(item => (
                         <div key={item._id} className="flex flex-col md:flex-row border-b border-gray-200 py-4">
                             {/* Image */}
-                            <img
+                            <Image
                                 src={item.product.imageUrl}
                                 alt={item.product.name}
                                 className="w-full md:w-1/5 h-auto object-contain mb-4 md:mb-0"

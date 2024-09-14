@@ -5,6 +5,7 @@ import axiosInstance from '../services/api';
 import Navbar from '@/components/navbar/Navbar';
 import { MoreVertical } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface Product {
   name: string;
@@ -185,7 +186,7 @@ const Page = () => {
                   {order.items.map((item) => (
                     <div key={item._id} className="flex mb-4 w-full">
                       {item.product && item.product.imageUrl ? (
-                        <img
+                        <Image
                           src={item.product.imageUrl}
                           alt={item.product.name}
                           className="w-20 h-20 object-cover rounded-md mr-4"

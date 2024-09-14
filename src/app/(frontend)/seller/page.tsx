@@ -2,12 +2,15 @@
 
 import SellerNavBar from '@/components/comps/SellerNavbar'
 import SellerFooter from '@/components/footer/SellerFooter'
+import Image from 'next/image'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-const page = () => {
+const Page = () => {
+
     const userData = useSelector((state) => state.user.userData);
     console.log("userdata",userData)
+
   return (
     <div>
         <SellerNavBar display={'hidden'}/>
@@ -16,7 +19,7 @@ const page = () => {
             <div className="text-sm text-gray-500 mb-5">
                 <a href="/" className="hover:underline">Home</a> &gt; <span>Sell Online</span>
             </div>
-            <img src="https://static-assets-web.flixcart.com/fk-sp-static/images/prelogin/banner/Desktop_sell.webp" alt="" />
+            <Image src="https://static-assets-web.flixcart.com/fk-sp-static/images/prelogin/banner/Desktop_sell.webp" alt="" />
 
             {/* Main Section */}
             <div className="text-center">
@@ -53,4 +56,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

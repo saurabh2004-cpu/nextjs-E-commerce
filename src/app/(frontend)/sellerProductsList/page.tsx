@@ -63,7 +63,7 @@ const Page = () => {
         if (userId) {
             fetchProducts();
         }
-    }, [userId]);
+    }, []);
 
     const handleCardClick = (productId: string) => {
         router.replace(`/get-product?productId=${encodeURIComponent(productId)}`);

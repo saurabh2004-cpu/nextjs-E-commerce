@@ -2,6 +2,7 @@ import axiosInstance from '@/app/(frontend)/services/api';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface Product {
   _id: string;
@@ -101,7 +102,7 @@ const GetAllProducts = () => {
             onClick={() => handleCardClick(product._id)}
           >
             <div className="w-full h-48 flex items-center justify-center  overflow-hidden">
-              <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain" />
+              <Image src={product.imageUrl} alt={product.name} className="w-full h-full object-contain" />
             </div>
             <div className="p-4 text-center">
               <h3 className="text-m mb-2">{product.name.length > 20 ? product.name.slice(0, 18)  : product.name}</h3>

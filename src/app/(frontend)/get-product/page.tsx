@@ -12,6 +12,7 @@ import PostReviewAndRatings from '@/components/comps/PostReviewAndRatings';
 import ListAllReviews from '@/components/comps/ListAllReviews';
 import { toast } from '@/components/ui/use-toast';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 
 interface Product {
   imageUrl: string;
@@ -64,14 +65,12 @@ const GetProductPage = () => {
     NProgress.start();
     try {
       const response = await axiosInstance.get('/api/get-wishlist');
-      // console.log("xxxxxxxxxxxxxxxxxxxx",response)
 
       if (!response) {
         console.error("No response from the wishlist API");
         return;
       }
       const isProductInWishlist = response.data.data.items.some(item => item.product._id === productId);
-      // dispatch(setWishlist(response.data.data.items.map(item => item)));
 
       setIsAddedToWishList(isProductInWishlist);
     } catch (error) {
@@ -87,7 +86,7 @@ const GetProductPage = () => {
       fetchProduct();
       fetchWishlist();
     }
-  }, [productId]);
+  }, [productId,user]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -173,7 +172,7 @@ const GetProductPage = () => {
           >
             <Heart className="h-7 w-7" fill={isAddedToWishList ? 'currentColor' : 'none'} />
           </div>
-          <img src={product.imageUrl} alt={product.name} className="w-full bg-gray-100 h-auto object-contain" />
+          <Image src={product.imageUrl} alt={product.name} className="w-full bg-gray-100 h-auto object-contain" />
           <div className="flex mt-4 gap-2">
             <button className="bg-yellow-500 text-white py-2 px-4 rounded" onClick={handleAddToCart}>
               {loading ? (

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 
 const SellerFooter = () => {
@@ -61,8 +62,8 @@ const SellerFooter = () => {
           <div>
             <h3 className="text-lg mb-4">Download Mobile App</h3>
             <div className="flex justify-center space-x-4 mb-4">
-              <img src="https://via.placeholder.com/150x50" alt="Google Play" className="h-10" />
-              <img src="https://via.placeholder.com/150x50" alt="App Store" className="h-10" />
+              <Image src="https://via.placeholder.com/150x50" alt="Google Play" className="h-10" />
+              <Image src="https://via.placeholder.com/150x50" alt="App Store" className="h-10" />
             </div>
             <h3 className="text-lg mb-4">Stay Connected</h3>
             <div className="flex justify-center space-x-4">

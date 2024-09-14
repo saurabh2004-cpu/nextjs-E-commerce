@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from '../navbar/Navbar';
+import Image from 'next/image';
 
 const EmptyCartCard = () => {
     return (
@@ -8,7 +9,7 @@ const EmptyCartCard = () => {
             <div className="flex flex-col items-center justify-center h-screen bg-white">
                 <div className="flex flex-col items-center">
                     {/* Image */}
-                    <img
+                    <Image
                         src="/path-to-your-image.svg" // Replace with the actual path to the image
                         alt="Empty Cart"
                         className="w-1/3 mb-6"

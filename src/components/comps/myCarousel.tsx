@@ -8,6 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import Image from 'next/image'
 
 const MyCarousel = () => {
 
@@ -24,7 +25,7 @@ const MyCarousel = () => {
           {carouselLinks.map((link, index) => (
             <CarouselItem key={index} className="w-full h-full flex-shrink-0">
               <div className={`w-full h-full bg-cover bg-center`} style={{ backgroundImage: `url(${link})` }}>
-                <img src={link} alt="" className='w-full h-full object-cover' />
+                <Image src={link} alt="" className='w-full h-full object-cover' />
               </div>
             </CarouselItem>
           ))}

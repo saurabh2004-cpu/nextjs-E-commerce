@@ -11,9 +11,12 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/options';
 
 // Helper to run middleware
-export const runMiddleware = (req: NextRequest, fn: any) => {
+export const runMiddleware = (
+  req: NextRequest,
+  fn: (req: NextRequest, res: NextResponse, next: (result?: any) => void) => void
+): Promise<unknown> => {
   return new Promise((resolve, reject) => {
-    fn(req, NextResponse.next(), (result: any) => {
+    fn(req, NextResponse.next(), (result?: any) => {
       if (result instanceof Error) {
         return reject(result);
       }
@@ -152,8 +155,4 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+export const runtime = 'nodejs';

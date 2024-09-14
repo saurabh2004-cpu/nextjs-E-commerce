@@ -8,6 +8,7 @@ import axiosInstance from '../services/api';
 import Navbar from '@/components/navbar/Navbar';
 import debounce from 'lodash/debounce';
 import { useDebounceCallback } from 'usehooks-ts' 
+import Image from 'next/image';
 
 interface Product {
     name: string;
@@ -164,7 +165,7 @@ const Page = () => {
                                 onClick={() => handleCardClick(product._id)}
                             >
                                 <div className="w-full h-48 flex items-center justify-center bg-gray-100 overflow-hidden">
-                                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain" />
+                                    <Image src={product.imageUrl} alt={product.name} className="w-full h-full object-contain" />
                                 </div>
                                 <div className="p-4 text-center">
                                     <h3 className="text-m  mb-2">{product.name.length > 20 ? product.name.slice(0, 18)  : product.name}</h3>

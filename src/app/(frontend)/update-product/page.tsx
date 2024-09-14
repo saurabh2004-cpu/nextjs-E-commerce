@@ -19,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, ImagePlus } from 'lucide-react';
+import Image from 'next/image';
 
 interface Product {
     imageUrl: string;
@@ -204,7 +205,7 @@ const Page = () => {
                                                 />
                                             </label>
                                             <div className="mt-4">
-                                                <img
+                                                <Image
                                                     src={imagePreview || product.imageUrl}
                                                     alt="Image Preview"
                                                     className="w-50 h-50 object-cover rounded-md"

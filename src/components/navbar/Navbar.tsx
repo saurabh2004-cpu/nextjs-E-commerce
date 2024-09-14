@@ -68,7 +68,7 @@ const Navbar = () => {
       fetchCurrentUserDetails() 
     }
     console.log("unauthorized")
-  }, [user,userFromStore])
+  }, [user,userFromStore,authorized])
 
   const handleLogin = () => {
    if(!user){

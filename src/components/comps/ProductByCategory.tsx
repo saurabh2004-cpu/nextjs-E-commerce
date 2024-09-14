@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { set_products } from '@/app/(frontend)/store/homeProductSlice';
 import { stat } from 'fs';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 const ProductByCategory = ({ category, heading }) => {
 
@@ -79,7 +80,7 @@ const ProductByCategory = ({ category, heading }) => {
             onClick={()=>handleCardClick(product._id)}
             >
             <div className="w-full h-48 flex items-center justify-center overflow-hidden">
-              <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain" />
+              <Image src={product.imageUrl} alt={product.name} className="w-full h-full object-contain" />
             </div>
             <div className="p-4 text-center">
               <h3 className="text-m  mb-2">{product.name.length > 20 ? product.name.slice(0, 18)  : product.name}</h3>
