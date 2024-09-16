@@ -4,7 +4,7 @@ import SellerNavBar from '@/components/comps/SellerNavbar';
 import { productSchema } from '@/schemas/productschema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
     Form,
@@ -18,10 +18,30 @@ import { Button } from '@/components/ui/button';
 import { Loader2, ImagePlus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axiosInstance from '../services/api';
-import ProductByCategory from '@/components/comps/ProductByCategory';
-import { Description } from '@radix-ui/react-toast';
+// import ProductByCategory from '@/components/comps/ProductByCategory';
+// import { Description } from '@radix-ui/react-toast';
 import { toast } from '@/components/ui/use-toast';
 import Image from 'next/image';
+
+interface ProductFormData {
+    name: string;
+    price: number;
+    description: string;
+    category: string;
+    stock: number;
+    keywords: string;
+    highlight: string;
+    color?: string;
+    ram?: number;
+    storage?: number;
+    battery?: number;
+    displaySize?: number;
+    launchYear?: number; // Updated to number or undefined
+    hdTechnology?: string;
+    clotheSize?: string;
+    clotheColor?: string;
+}
+
 
 const Page = () => {
     const router = useRouter(); // next-navigation
@@ -42,65 +62,67 @@ const Page = () => {
             keywords: '',
             imageUrl: '',
             highlight: '',
-            ram: null,
-            storage: null,
+            ram: undefined,
+            storage: undefined,
             color: '',
-            battery: null,
-            displaySize: 0,
-            launchYear: 0,
+            battery: undefined,
+            displaySize: undefined,
+            launchYear: undefined,
             hdTechnology: '',
             clotheSize: '',
             clotheColor: ''
         },
     });
 
-    const onSubmit = async (data) => {
+    const onSubmit: SubmitHandler<ProductFormData> = async (data) => {
         setIsSubmitting(true);
-        console.log(data)
+        console.log(data);
         try {
             const formData = new FormData();
-
+    
             formData.append('name', data.name);
-            formData.append('price', data.price);
+            formData.append('price', data.price.toString());
             formData.append('description', data.description);
             formData.append('category', data.category);
-            formData.append('stock', data.stock);
+            formData.append('stock', data.stock.toString());
             formData.append('keywords', data.keywords);
-            formData.append('highlight', data.highlight)
-
+            formData.append('highlight', data.highlight);
+    
             if (!productImage) {
-                toast({ description: "please select a thumbnial image for product" })
+                toast({ description: "Please select a thumbnail image for the product" });
+                setIsSubmitting(false);
+                return;
             }
-
+    
             formData.append('imageUrl', productImage);
-
-            //mobiles and tablets
+    
+            // Mobiles and tablets
             if (data.category === "mobiles and tablets") {
                 if (!data.color || !data.ram || !data.storage || !data.battery) {
                     toast({ description: "Please fill out all product details" });
                     setIsSubmitting(false);
                     return;
                 }
-                formData.append('ram', data.ram);
-                formData.append('storage', data.storage);
+                formData.append('ram', data.ram.toString());
+                formData.append('storage', data.storage.toString());
                 formData.append('color', data.color);
-                formData.append('battery', data.battery);
+                formData.append('battery', data.battery.toString());
             }
-
-            //tv and appliences
-            if (productCategory === "tv and appliances") {
+    
+            // TV and appliances
+            if (data.category === "tv and appliances") {
                 if (!data.displaySize || !data.launchYear || !data.hdTechnology) {
                     toast({ description: "Please fill out all product details" });
                     setIsSubmitting(false);
                     return;
                 }
-                formData.append('displaySize', data.displaySize);
-                formData.append('launchYear', data.launchYear);
+                formData.append('displaySize', data.displaySize.toString());
+                formData.append('launchYear', data.launchYear.toString());
                 formData.append('hdTechnology', data.hdTechnology);
             }
-
-            //fashion
-            if (productCategory === "fashion") {
+    
+            // Fashion
+            if (data.category === "fashion") {
                 if (!data.clotheSize || !data.clotheColor) {
                     toast({ description: "Please fill out all product details" });
                     setIsSubmitting(false);
@@ -109,25 +131,22 @@ const Page = () => {
                 formData.append('clotheSize', data.clotheSize);
                 formData.append('clotheColor', data.clotheColor);
             }
-
-
-            const response = await axiosInstance.post('http://localhost:3000/api/create-product',
-                formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }
-            );
-
+    
+            const response = await axiosInstance.post('http://localhost:3000/api/create-product', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+    
             console.log('Success:', response.data);
-            router.replace(`/get-product?productId=${encodeURIComponent(response.data.data._id)}`)
+            router.replace(`/get-product?productId=${encodeURIComponent(response.data.data._id)}`);
         } catch (error) {
             console.error('Error:', error);
         } finally {
             setIsSubmitting(false);
         }
     };
+    
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -441,7 +460,7 @@ const Page = () => {
                                 </div>
                             }
 
-                            
+
 
 
 
@@ -464,7 +483,7 @@ const Page = () => {
                                 control={form.control}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Keywords(insert keyword with "," seperated)</FormLabel>
+                                        <FormLabel>Keywords(insert keyword with &quot;,!&quot; seperated)</FormLabel>
                                         <Input
                                             placeholder="Keywords"
                                             {...field}

@@ -23,6 +23,7 @@ const VerifyOtpPage = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  
   const searchParams = useSearchParams();
   const phone = searchParams.get('phone');
 

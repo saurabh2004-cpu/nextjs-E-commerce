@@ -23,6 +23,12 @@ interface Product {
   [key: string]: any;
 }
 
+interface WishlistItem {
+  product: {
+    _id: string;
+  };
+}
+
 const GetProductPage = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,59 +40,63 @@ const GetProductPage = () => {
   const user = session?.user;
 
 
- 
+
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId');
 
-  const fetchProduct = async () => {
-    if (!productId) {
-      setError("Product ID is missing");
-      setLoading(false);
-      return;
-    }
 
-    try {
-      NProgress.start();
-      const response = await axiosInstance.get(`/api/get-product?productId=${productId}`);
-      if (response.data && response.data.data) {
-        setProduct(response.data.data);
-      } else {
-        setError("No product data found");
-      }
-    } catch (error) {
-      setError("Error while fetching product");
-    } finally {
-      setLoading(false);
-      NProgress.done();
-    }
-  };
-
-  const fetchWishlist = async () => {
-    NProgress.start();
-    try {
-      const response = await axiosInstance.get('/api/get-wishlist');
-
-      if (!response) {
-        console.error("No response from the wishlist API");
-        return;
-      }
-      const isProductInWishlist = response.data.data.items.some(item => item.product._id === productId);
-
-      setIsAddedToWishList(isProductInWishlist);
-    } catch (error) {
-      console.log("error ",error.message);
-    } finally {
-      setLoading(false);
-      NProgress.done();
-    }
-  };
 
   useEffect(() => {
+
+    const fetchProduct = async () => {
+      if (!productId) {
+        setError("Product ID is missing");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        NProgress.start();
+        const response = await axiosInstance.get(`/api/get-product?productId=${productId}`);
+        if (response.data && response.data.data) {
+          setProduct(response.data.data);
+        } else {
+          setError("No product data found");
+        }
+      } catch (error) {
+        setError("Error while fetching product");
+      } finally {
+        setLoading(false);
+        NProgress.done();
+      }
+    };
+
+    const fetchWishlist = async () => {
+      NProgress.start();
+      try {
+        const response = await axiosInstance.get('/api/get-wishlist');
+
+        if (!response) {
+          console.error("No response from the wishlist API");
+          return;
+        }
+        const isProductInWishlist = response.data.data.items.some((item: WishlistItem) => item.product._id === productId);
+
+        setIsAddedToWishList(isProductInWishlist);
+      } catch (error: any) {
+        console.log("error ", error.message);
+      } finally {
+        setLoading(false);
+        NProgress.done();
+      }
+    };
+
+
     if (productId) {
       fetchProduct();
       fetchWishlist();
     }
-  }, [productId,user]);
+  }, [productId, user]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -271,22 +281,22 @@ const GetProductPage = () => {
             }
 
             {/* tv and appliences */}
-            {product.category === 'tv and appliances' &&  
-            <ul className="list-disc ml-4 text-gray-700">
-              <li>{product.description}</li>
-              <li>{product.displaySize} Inch</li>
-              <li>{product.highlight} </li>
-            </ul>}
+            {product.category === 'tv and appliances' &&
+              <ul className="list-disc ml-4 text-gray-700">
+                <li>{product.description}</li>
+                <li>{product.displaySize} Inch</li>
+                <li>{product.highlight} </li>
+              </ul>}
 
             {/* fashion */}
-            {product.category === 'fashion' &&  
-            <ul className="list-disc ml-4 text-gray-700">
-              <li>{product.description}</li>
-              <li>{product.highlight} </li>
-            </ul>}
+            {product.category === 'fashion' &&
+              <ul className="list-disc ml-4 text-gray-700">
+                <li>{product.description}</li>
+                <li>{product.highlight} </li>
+              </ul>}
 
 
-            
+
 
 
 
@@ -309,8 +319,20 @@ const GetProductPage = () => {
             <p className="text-gray-700">{product.description}</p>
             <a href="#view-more" className="text-blue-600">View all features</a>
           </div>
-          <PostReviewAndRatings productId={productId} />
-          <ListAllReviews productId={productId} averageRating={product.averageRating} totalReviews={product.totalReviews} />
+
+          {productId && product ? (
+            <>
+              <PostReviewAndRatings productId={productId} />
+              <ListAllReviews
+                productId={productId}
+                averageRating={product?.averageRating || 0}
+                totalReviews={product?.totalReviews || 0}
+              />
+            </>
+          ) : (
+            <p>Product not found or productId is missing.</p>
+          )}
+          
         </div>
       </div>
     </>

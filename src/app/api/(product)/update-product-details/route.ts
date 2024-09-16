@@ -25,7 +25,11 @@ export async function POST(req: NextRequest) {
   if (description) updateData.description = description;
   if (category) updateData.category = category;
   if (stock) updateData.stock = stock;
-  if (keywords) updateData.keywords = keywords.split(',').map((keyword: string) => keyword.trim());
+
+ if (keywords && typeof keywords === "string") {
+    updateData.keywords = keywords.split(',').map((keyword: string) => keyword.trim());
+  }
+
 
   try {
     const updatedProduct = await ProductModel.findByIdAndUpdate(productId, updateData, { new: true });

@@ -8,8 +8,7 @@ import { ApiResponse } from "@/utils/ApiResponse";
 import mongoose from "mongoose";
 
 export async function POST(req: NextRequest) {
-    
-    const {productId} = await req.json();
+    const { productId } = await req.json();
 
     if (!productId) {
         return NextResponse.json(new ApiResponse(400, null, "Product ID is required"), { status: 400 });
@@ -25,30 +24,30 @@ export async function POST(req: NextRequest) {
     await dbConnect();
 
     try {
-        let cart: IWishlist | null = await WishlistModel.findOne({ user: userId });
+        let wishlist: IWishlist | null = await WishlistModel.findOne({ user: userId });
 
-        if (!cart) {
-            // Create a new cart if it doesn't exist
-            cart = await WishlistModel.create({
+        if (!wishlist) {
+            // Create a new wishlist if it doesn't exist
+            wishlist = await WishlistModel.create({
                 user: new mongoose.Types.ObjectId(userId),
-                items: [{ product: mongoose.Types.ObjectId.createFromHexString(productId)}]
+                items: [{ product: new mongoose.Schema.Types.ObjectId(productId) }]  // Correct instantiation here
             });
         } else {
-            const existingProductIndex = cart.items.findIndex((item: IWishlistItem) => item.product.toString() === productId);
+            const existingProductIndex = wishlist.items.findIndex((item: IWishlistItem) => item.product.toString() === productId);
 
             if (existingProductIndex >= 0) {
-                return NextResponse.json(new ApiResponse(201, cart, "Product alredy added in wishlist"), { status: 201 });
+                return NextResponse.json(new ApiResponse(201, wishlist, "Product already added to wishlist"), { status: 201 });
             } else {
-                // Add the product as a new item if it doesn't exist in the cart
-                cart.items.push({ product: mongoose.Types.ObjectId.createFromHexString(productId)});
+                // Add the product as a new item if it doesn't exist in the wishlist
+                wishlist.items.push({ product: new mongoose.Schema.Types.ObjectId(productId) });  // Correct instantiation here
             }
 
-            await cart.save();
+            await wishlist.save();
         }
 
-        return NextResponse.json(new ApiResponse(200, cart, "Product added to cart successfully"), );
+        return NextResponse.json(new ApiResponse(200, wishlist, "Product added to wishlist successfully"));
     } catch (error) {
-        console.error("Error while adding product to cart:", error);
+        console.error("Error while adding product to wishlist:", error);
         return NextResponse.json(new ApiError(500, "Internal server error"), { status: 500 });
     }
 }

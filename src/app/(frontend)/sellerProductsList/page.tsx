@@ -10,6 +10,7 @@ import ConfirmRemoveCard from '@/components/comps/ConfirmRemoveCard';
 import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import EmptyProductCards from '@/components/comps/EmptyProductCards';
+import Image from 'next/image';
 
 interface ProductData {
     _id: string;
@@ -35,35 +36,36 @@ const Page = () => {
     const router = useRouter();
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [loading, setLoading] = useState(false)
-    const [isSellerHaveProducts,setisSellerHaveProducts] = useState(false)
+    const [isSellerHaveProducts, setisSellerHaveProducts] = useState(false)
     const [error, setError] = useState<string | null>(null);
 
-    const fetchProducts = async () => {
-        setLoading(true);
-        NProgress.start();
-        try {
-            const response = await axiosInstance.get(`/api/get-sellers-products?userId=${userId}`);
-
-            if (response.data.statusCode === 404 || response.data.data.length === 0) {
-                setError("You don't have any products to sell.");
-                setProductsData([]);  // Ensure productsData is empty
-            } else {
-                setProductsData(response.data.data);
-            }
-        } catch (error) {
-            setError("Error while fetching your products. Please try again later.");
-            console.log("Error while fetching user's products", error);
-        } finally {
-            setLoading(false);
-            NProgress.done();
-        }
-    };
     useEffect(() => {
+
+        const fetchProducts = async () => {
+            setLoading(true);
+            NProgress.start();
+            try {
+                const response = await axiosInstance.get(`/api/get-sellers-products?userId=${userId}`);
+
+                if (response.data.statusCode === 404 || response.data.data.length === 0) {
+                    setError("You don't have any products to sell.");
+                    setProductsData([]);  // Ensure productsData is empty
+                } else {
+                    setProductsData(response.data.data);
+                }
+            } catch (error) {
+                setError("Error while fetching your products. Please try again later.");
+                console.log("Error while fetching user's products", error);
+            } finally {
+                setLoading(false);
+                NProgress.done();
+            }
+        };
 
         if (userId) {
             fetchProducts();
         }
-    }, []);
+    }, [userId]);
 
     const handleCardClick = (productId: string) => {
         router.replace(`/get-product?productId=${encodeURIComponent(productId)}`);
@@ -141,14 +143,14 @@ const Page = () => {
                             onMouseEnter={() => handleMouseEnter(product._id)}
                             onMouseLeave={handleMouseLeave}
                         >
-                            <img
+                            <Image
                                 src={product.imageUrl || '/product.jpg'}
                                 alt={product.name}
                                 className="w-full h-48 object-cover"
                                 onClick={() => handleCardClick(product._id)}
                             />
                             <div className="p-4 text-center">
-                                <h3 className="text-m mb-2">{product.name.length > 20 ? product.name.slice(0, 18)  : product.name}</h3>
+                                <h3 className="text-m mb-2">{product.name.length > 20 ? product.name.slice(0, 18) : product.name}</h3>
                                 <p className="text-gray-700 mb-2">${product.price}</p>
                             </div>
 

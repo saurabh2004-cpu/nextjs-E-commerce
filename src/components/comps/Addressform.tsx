@@ -12,13 +12,17 @@ import { toast } from '@/components/ui/use-toast';
 import axios from 'axios';
 
 interface Address {
-    _id?: string;
+    _id: string;
     addressLine1: string;
     addressLine2: string;
     city: string;
     state: string;
     postalCode: string;
     country: string;
+    createdAt: string;
+    updatedAt: string;
+    user: string;
+    __v: number;
 }
 
 interface AddressFormProps {

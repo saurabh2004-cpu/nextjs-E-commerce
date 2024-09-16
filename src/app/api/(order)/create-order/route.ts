@@ -27,7 +27,12 @@ export async function POST(req:NextRequest){
     try {
 
         const product = await ProductModel.findById(productId)
-        const total=product?.price *quantity
+
+        if(!product){
+            return NextResponse.json(new ApiResponse(404,false,"product not found"))
+        }
+        
+        const total = product?.price*quantity
 
         const order = await OrderModel.create({
             user: new mongoose.Types.ObjectId(userId),

@@ -11,7 +11,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/options';
 
 // Helper to run middleware
-export const runMiddleware = (
+const runMiddleware = (
   req: NextRequest,
   fn: (req: NextRequest, res: NextResponse, next: (result?: any) => void) => void
 ): Promise<unknown> => {
@@ -24,6 +24,7 @@ export const runMiddleware = (
     });
   });
 };
+
 
 // Define POST handler
 export async function POST(req: NextRequest) {
@@ -38,7 +39,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Method not allowed' }, { status: 405 });
   }
 
-  await runMiddleware(req, upload.fields([{ name: 'imageUrl', maxCount: 1 }]));
 
   await dbConnect();
 
@@ -50,47 +50,40 @@ export async function POST(req: NextRequest) {
     clotheSize,clotheColor,
 
   } = Object.fromEntries(formData);
-  const imageFile = formData.get('imageUrl');
+  
+  const imageFile = formData.get('imageUrl') as unknown as File;
 
-  console.log("jwsjwsj",clotheColor,clotheSize)
 
   if (!imageFile || !(imageFile instanceof File)) {
     throw new ApiError(404, "Product image is missing or not a valid file");
   }
 
-  const uploadsDir = path.join(process.cwd(), 'public/uploads');
-  const imagePath = path.join(uploadsDir, `${Date.now()}-${imageFile.name}`);
+  let imageData;
+  try {
+    imageData = await uploadOnCloudinary(imageFile, "products");
 
-  // Ensure the uploads directory exists
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
+    // Check if `secure_url` exists in the response
+    if (!imageData?.secure_url) {
+      throw new ApiError(500, "Error uploading image to Cloudinary");
+    }
+  } catch (error) {
+    console.error("Cloudinary upload error:", error);
+    throw new ApiError(500, "Failed to upload image to Cloudinary");
   }
-
-  // Save the file locally
-  const buffer = Buffer.from(await imageFile.arrayBuffer());
-  fs.writeFileSync(imagePath, buffer);
+ 
 
   if (!name || !price || !description || !category || !stock || !highlight) {
     throw new ApiError(400, 'Missing required fields');
   }
 
-  
-
-
-
-
 
   // Ensure `keywords` is split into an array
+  let keywordArray: string[] = [];
   if (keywords && typeof keywords === 'string') {
-    keywords = keywords.split(',').map(keyword => keyword.trim());
+    keywordArray = keywords.split(',').map(keyword => keyword.trim());
   }
 
   try {
-    const uploadedImage = await uploadOnCloudinary(imagePath, 'products');
-
-    if (!uploadedImage) {
-      throw new ApiError(500, 'Error uploading image');
-    }
 
     const isAvailable = parseInt(stock as string, 10) > 0;
 
@@ -100,9 +93,9 @@ export async function POST(req: NextRequest) {
       description,
       category,
       stock,
-      imageUrl: uploadedImage.secure_url,
+      imageUrl: imageData?.secure_url,
       productOwner: ownerId,
-      keywords,
+      keywords:keywordArray,
       isAvailable,
       highlight,
     });
@@ -155,4 +148,4 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export const runtime = 'nodejs';
+export const runtime = 'nodejs'; 

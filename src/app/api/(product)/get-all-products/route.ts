@@ -1,17 +1,19 @@
+export const dynamic = 'force-dynamic';
+
+
 import dbConnect from "@/app/lib/dbConnect";
-import { authOptions } from "../../auth/[...nextauth]/options";
-import { getServerSession } from "next-auth/next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { ApiResponse } from "@/utils/ApiResponse";
 import ProductModel from "@/app/models/product.models";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     try {
         await dbConnect();
-       
-        const { searchParams } = new URL(req.url);
-        const page = parseInt(searchParams.get("page") || "1", 10);
-        const limit = parseInt(searchParams.get("limit") || "7", 7);
+
+        const url = new URL(req.url);
+        const page = parseInt(url.searchParams.get("page") || "1", 10);
+        const limit = parseInt(url.searchParams.get("limit") || "7", 10);
+
 
         // Validate page and limit
         if (isNaN(page) || page <= 0) {

@@ -46,72 +46,78 @@ const SellerProfile = () => {
     const [featuredproductsData, setFeaturedProductsData] = useState<ProductData[]>([]);
     const router = useRouter()
 
-    const fetchCurrentUserDetails = async () => {
-        NProgress.start();
-        try {
-            const response = await axiosInstance.get('http://localhost:3000/api/current-user');
-            if (response) {
-                console.log("Current user", response.data.data);
-                setUserData(response.data.data);
-            } else {
-                console.log("Error while fetching current user");
-            }
-        } catch (error) {
-            console.error("erroe while fetching sellers profile")
-            NProgress.done();
-        }
-    };
+    
 
-    const fetchProducts = async () => {
-        // console.log(userData?._id)
-        NProgress.start();
-        setloading(true)
-        try {
-            const response = await axiosInstance.get(`http://localhost:3000/api/get-sellers-products?userId=${userData?._id}`);
-            if (response) {
-                setProductsData(response.data.data);
-            }
-        } catch (error) {
-            console.log("Error while fetching user's products", error);
-        } finally {
-            setloading(false)
-            NProgress.done();
-        }
-    };
+    
     const lastSixProducts = productsData.slice(-6);
 
-    const fetchFeaturedProducts = async () => {
-        setloading(true)
-        try {
-            const response = await axiosInstance.get(`http://localhost:3000/api/sellers-featured-products?userId=${userId}`);
-            if (response) {
-                console.log("featured Products", response);
-                setFeaturedProductsData(response.data.data);
+    
+   
+
+    useEffect(() => {
+        const fetchCurrentUserDetails = async () => {
+            NProgress.start();
+            try {
+                const response = await axiosInstance.get('http://localhost:3000/api/current-user');
+                if (response) {
+                    console.log("Current user", response.data.data);
+                    setUserData(response.data.data);
+                } else {
+                    console.log("Error while fetching current user");
+                }
+            } catch (error) {
+                console.error("erroe while fetching sellers profile")
+                NProgress.done();
             }
-        } catch (error) {
-            console.log("Error while fetching user's featured products", error);
-        } finally {
-            setloading(false)
-            NProgress.done();
-        }
-    };
+        };
 
-    useEffect(() => {
         fetchCurrentUserDetails();
-    }, []);
+    }, [userId]);
 
 
     useEffect(() => {
+        const fetchProducts = async () => {
+            // console.log(userData?._id)
+            NProgress.start();
+            setloading(true)
+            try {
+                const response = await axiosInstance.get(`http://localhost:3000/api/get-sellers-products?userId=${userData?._id}`);
+                if (response) {
+                    setProductsData(response.data.data);
+                }
+            } catch (error) {
+                console.log("Error while fetching user's products", error);
+            } finally {
+                setloading(false)
+                NProgress.done();
+            }
+        };
         if (userId) {
             fetchProducts();
         }
-    }, []);
+    }, [userData?._id,userId]);
 
     useEffect(() => {
+        const fetchFeaturedProducts = async () => {
+            setloading(true)
+            try {
+                const response = await axiosInstance.get(`http://localhost:3000/api/sellers-featured-products?userId=${userId}`);
+                if (response) {
+                    console.log("featured Products", response);
+                    setFeaturedProductsData(response.data.data);
+                }
+            } catch (error) {
+                console.log("Error while fetching user's featured products", error);
+            } finally {
+                setloading(false)
+                NProgress.done();
+            }
+        };
+
         if (userId) {
             fetchFeaturedProducts();
         }
-    }, []);
+    }, [userId]);
 
 
     // Function to render the user avatar
@@ -181,7 +187,7 @@ const SellerProfile = () => {
                                     <span className="ml-2">(4.5)</span>
                                 </div>
                                 <p className="text-gray-600 mb-4">
-                                    Brief overview of the seller's business, mission, and values.
+                                    Brief overview of the seller&apos;s business, mission, and values.
                                 </p>
                                 <div className="flex items-center space-x-4 mb-4">
                                     <a href={`mailto:${userData?.email}`} className="text-blue-500 hover:underline">
@@ -205,7 +211,7 @@ const SellerProfile = () => {
                             </div>
                         </div>
                         <div className="mt-4 text-gray-700">
-                            <p><strong>Location:</strong> Seller's Location</p>
+                            <p><strong>Location:</strong> Seller&apos;s Location</p>
                             <p><strong>Business Registration:</strong> Business Registration Details</p>
                             <p><strong>Years in Business:</strong> X years</p>
                         </div>
@@ -229,7 +235,7 @@ const SellerProfile = () => {
 
                     <div className="bg-white shadow rounded-lg p-6 mb-6">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-2xl font-semibold">Seller's Products</h2>
+                            <h2 className="text-2xl font-semibold">Seller&apos;s Products</h2>
                             <div>
                                 <input
                                     type="text"

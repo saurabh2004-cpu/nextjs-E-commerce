@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import axiosInstance from '../services/api';
 import Navbar from '@/components/navbar/Navbar';
+import Image from 'next/image';
 
 interface Order {
     _id: string;
@@ -33,20 +34,23 @@ const OrderDetailsPage = () => {
     const [loading, setLoading] = useState(true);
     const [orderDetails, setOrderDetails] = useState<Order>()
 
-    const fetchOrder = async () => {
-        setLoading(true)
-        try {
-            const response = await axiosInstance.get(`/api/get-order-details?orderId=${orderId}`)
-            setOrderDetails(response.data.data)
-        } catch (error) {
-            console.error("Error fetching order details ", error)
-            toast({ description: "Error: Getting order details please try again", variant: "destructive" });
-        } finally {
-            setLoading(false);
-        }
-    }
+    
 
     useEffect(() => {
+
+        const fetchOrder = async () => {
+            setLoading(true)
+            try {
+                const response = await axiosInstance.get(`/api/get-order-details?orderId=${orderId}`)
+                setOrderDetails(response.data.data)
+            } catch (error) {
+                console.error("Error fetching order details ", error)
+                toast({ description: "Error: Getting order details please try again", variant: "destructive" });
+            } finally {
+                setLoading(false);
+            }
+        }
+
         fetchOrder()
     }, [orderId])
 
@@ -99,7 +103,7 @@ const OrderDetailsPage = () => {
 
                 {items.map((item) => (
                     <div key={item._id} className="flex items-center mb-4">
-                        <img src={item.product.imageUrl} alt={item.product.name} className="w-20 h-20 object-cover rounded-md mr-4" />
+                        <Image src={item.product.imageUrl} alt={item.product.name} className="w-20 h-20 object-cover rounded-md mr-4" />
                         <div className="flex-1">
                             <h3 className="font-semibold text-gray-800">{item.product.name}</h3>
                             <p className="text-gray-500 text-sm">{item.product.description}</p>

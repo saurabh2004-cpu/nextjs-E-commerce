@@ -153,7 +153,7 @@ const Navigation = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const router = useRouter()
 
-  const handleMouseEnter = (index) => {
+  const handleMouseEnter = (index:any) => {
     setOpenDropdown(index);
   };
 

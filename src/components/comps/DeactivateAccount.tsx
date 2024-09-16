@@ -1,4 +1,5 @@
 'use client'
+import { RootState } from '@/app/(frontend)/store/store';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -6,7 +7,7 @@ const DeactivateAccount = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
-  const userData = useSelector(state=>state.user.userData)
+  const userData = useSelector((state:RootState)=>state.user.userData)
 
   const handleDeactivate = () => {
     

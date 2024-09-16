@@ -32,7 +32,13 @@ export const authOptions: NextAuthOptions = {
           user.verifyCodeExpiry = expiryDate;
           await user.save();
           
-          return user;
+          return {
+            id: user._id.toString(), // Ensure id is mapped correctly
+            isVerified: user.isVerified,
+            username: user.username,
+            fullname: user.fullname,
+            phone: user.phone,
+          };
         } catch (error) {
           console.error("Authorization error:", error);
           if (error instanceof ApiError) {

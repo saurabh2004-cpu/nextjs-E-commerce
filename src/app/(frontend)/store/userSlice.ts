@@ -1,7 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  userData: null
+interface UserData {
+  username?: string;
+  fullname?: string;
+  phone?: string;
+  email?: string;
+  gender?: string;
+}
+
+interface UserState {
+  userData: UserData;
+}
+
+const initialState: UserState = {
+  userData: {}
 };
 
 const userSlice = createSlice({
@@ -13,7 +25,7 @@ const userSlice = createSlice({
       localStorage.setItem('userData', JSON.stringify(action.payload));
     },
     clearUser: (state) => {
-      state.userData = null;
+      state.userData ={};
       localStorage.removeItem('userData');
     }
   }

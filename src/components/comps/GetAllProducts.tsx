@@ -1,3 +1,5 @@
+'use client'
+
 import axiosInstance from '@/app/(frontend)/services/api';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState, useCallback } from 'react';

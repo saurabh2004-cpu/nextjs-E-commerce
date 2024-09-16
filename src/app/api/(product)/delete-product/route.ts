@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { runMiddleware } from "../create-product/route";
 import dbConnect from "@/app/lib/dbConnect";
 import { ApiError } from "@/utils/ApiError";
 import ProductModel from "@/app/models/product.models";

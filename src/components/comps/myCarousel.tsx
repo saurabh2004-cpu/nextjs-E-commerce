@@ -13,9 +13,9 @@ import Image from 'next/image'
 const MyCarousel = () => {
 
   const carouselLinks = [
-    'https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/45491294b0d546c4.jpg?q=20',
-    'https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/04bb152bb2d3f429.jpg?q=20',
-    'https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/3c0e1e3aca8b3c9d.jpg?q=20',
+    'https://tse2.mm.bing.net/th?id=OIP.c9xCr_QD8JsHRFfNL4ZVqQHaCe&pid=Api&P=0&h=220',
+    'https://tse2.mm.bing.net/th?id=OIP.c9xCr_QD8JsHRFfNL4ZVqQHaCe&pid=Api&P=0&h=220',
+    'https://tse2.mm.bing.net/th?id=OIP.c9xCr_QD8JsHRFfNL4ZVqQHaCe&pid=Api&P=0&h=220',
   ]
 
   return (
@@ -25,7 +25,14 @@ const MyCarousel = () => {
           {carouselLinks.map((link, index) => (
             <CarouselItem key={index} className="w-full h-full flex-shrink-0">
               <div className={`w-full h-full bg-cover bg-center`} style={{ backgroundImage: `url(${link})` }}>
-                <Image src={link} alt="" className='w-full h-full object-cover' />
+                <Image
+                  src='/src/app/img/Screenshot_20240915_093913.png'
+                  alt=""
+                  width={500} // Replace with the actual width of the image
+                  height={300} // Replace with the actual height of the image
+                  className='w-full h-full object-cover'
+                />
+
               </div>
             </CarouselItem>
           ))}

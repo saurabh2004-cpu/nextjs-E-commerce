@@ -19,8 +19,7 @@ import { useToast } from "@/components/ui/use-toast";
 import ListWishlist from "@/components/comps/ListWishlist";
 import { z } from "zod";
 import { setUser } from "../store/userSlice";
-import store from "../store/store";
-import { setWishlist } from "../store/wishlistSlice";
+import store, { RootState } from "../store/store";
 import AddressCard from "@/components/comps/AddressCard";
 import { useSearchParams } from "next/navigation";
 
@@ -38,9 +37,10 @@ const ProfileSettings = () => {
   const dispatch = useDispatch();
   const { toast } = useToast();
 
-  const userData = useSelector((state) => state.user.userData);
+  const userData = useSelector((state: RootState) => state.user.userData);
   console.log("userdata", userData)
-  const [gender, setGender] = useState(userData?.gender || '');
+
+  const [gender, setGender] = useState<string>(userData?.gender || '');
 
   const searchParams = useSearchParams()
   const myWishlist =searchParams.get('wishlist')
@@ -62,7 +62,7 @@ const ProfileSettings = () => {
     if(myWishlist){
       setActiveTab(myWishlist)
     }
-  }, [userData, form]);
+  }, [userData, form,myWishlist]);
 
   //
   const handleGenderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,7 +174,7 @@ const ProfileSettings = () => {
               className="rounded-full text-red-500 mr-4 flex items-center justify-center bg-orange-500 text-white font-bold text-2xl"
               style={{ width: '50px', height: '50px' }}
             >
-              {getInitial(userData?.username)}
+              {getInitial(userData?.username || '')}
             </div>
             <div>
               <h2 className="text-lg font-semibold">Hello, {userData?.username}</h2>
@@ -393,7 +393,7 @@ const ProfileSettings = () => {
                   What happens when I update my email address (or mobile number)?
                 </p>
                 <p className="text-gray-600">
-                  Your login email id (or mobile number) changes, likewise. You'll
+                  Your login email id (or mobile number) changes, likewise. You &apos;ll
                   receive all your account related communication on your updated
                   email address (or mobile number).
                 </p>
@@ -414,8 +414,8 @@ const ProfileSettings = () => {
                   email address (or mobile number)?
                 </p>
                 <p className="text-gray-600">
-                  Updating your email address (or mobile number) doesn't invalidate
-                  your account. Your account remains fully functional. You'll
+                  Updating your email address (or mobile number) doesn&apos;t invalidate
+                  your account. Your account remains fully functional. You&apos;ll
                   continue seeing your Order history, saved information and personal
                   details.
                 </p>
@@ -426,7 +426,7 @@ const ProfileSettings = () => {
                   address?
                 </p>
                 <p className="text-gray-600">
-                  Flipkart has a 'single sign-on' policy. Any changes will reflect
+                  Flipkart has a &apos;single sign-on&apos; policy. Any changes will reflect
                   in your Seller account also.
                 </p>
               </div>

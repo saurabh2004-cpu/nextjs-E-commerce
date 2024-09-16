@@ -24,7 +24,7 @@ const AddressCard = () => {
     const [showAddressform, setShowAddressform] = useState(false);
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [activeMenu, setActiveMenu] = useState<string | null>(null); // Track which menu is open
-    const [addressData ,setAddressData]=useState({})
+    const [addressData, setAddressData] = useState<Address | null>(null); // Fix type here
     const [loading ,setLoading] = useState(false)
     const router=useRouter()
 
@@ -82,12 +82,12 @@ const AddressCard = () => {
 
     const handleCloseForm = () => {
         setShowAddressform(false);
-        setAddressData('');
+        setAddressData(null);
         
     };
     
     const handleSave = (savedAddress: Address) => {
-        if (addressData._id) {
+        if (addressData?._id) {
             setAddresses(addresses.map(address => address._id === savedAddress._id ? savedAddress : address));
         } else {
             setAddresses([...addresses, savedAddress]);
@@ -105,7 +105,7 @@ const AddressCard = () => {
                 ADD A NEW ADDRESS
             </button>
 
-            {showAddressform && <Addressform addressData={addressData}  onClose={handleCloseForm} onSave={handleSave}/>}
+            {showAddressform && <Addressform addressData={addressData || {}}  onClose={handleCloseForm} onSave={handleSave}/>}
 
             {showAddressform && (
                 <button className="flex items-center text-blue-600 font-semibold mb-6" onClick={() => setShowAddressform(false)}>

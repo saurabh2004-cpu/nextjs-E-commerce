@@ -6,15 +6,21 @@ import { useSession } from 'next-auth/react';
 import axiosInstance from '@/app/(frontend)/services/api';
 import { useRouter } from 'next/navigation';
 
+
+interface User{
+    _id:string,
+    username:string
+}
+
 interface Review {
     _id: string;
     rating: number;
     comment: string;
     createdAt: string;
     updatedAt: string;
-    user: string;
     product: string;
     username: string;
+    user:User
 }
 
 interface ListAllReviewsProps {

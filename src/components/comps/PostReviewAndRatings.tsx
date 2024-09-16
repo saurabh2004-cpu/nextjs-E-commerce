@@ -19,9 +19,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useToast } from '../ui/use-toast';
 
+interface PostReviewAndRatingsProps{
+    productId:string;
+}
 
-
-const PostReviewAndRatings = ({ productId }) => {
+const PostReviewAndRatings: React.FC<PostReviewAndRatingsProps> = ({ productId }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [rating, setRating] = useState(0);
     const router = useRouter();

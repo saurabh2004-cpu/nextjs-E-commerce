@@ -6,8 +6,8 @@ import NProgress from 'nprogress';
 import axiosInstance from '../services/api';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { updateProductSchema } from '@/schemas/productschema';
-import { zodResolver } from '@hookform/resolvers/zod';
+// import { updateProductSchema } from '@/schemas/productschema';
+// import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
     Form,
@@ -20,6 +20,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, ImagePlus } from 'lucide-react';
 import Image from 'next/image';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { updateProductSchema } from '@/schemas/productschema';
 
 interface Product {
     imageUrl: string;
@@ -44,6 +46,7 @@ const Page = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
 
     const form = useForm({
+        resolver: zodResolver(updateProductSchema),
         defaultValues: {
             name: '',
             price: 0,
@@ -97,12 +100,12 @@ const Page = () => {
             const formData = new FormData();
             
             // Convert keywords string to an array
-            const keywordsArray = data.keywords.split(',').map(keyword => keyword.trim());
+            const keywordsArray = (data.keywords || '').split(',').map(keyword => keyword.trim());
     
             // Append form data
             formData.append('name', data.name);
             formData.append('price', String(data.price));  // Convert number to string
-            formData.append('description', data.description);
+            formData.append('description', data.description || '');
             formData.append('category', data.category);
             formData.append('stock', String(data.stock));  // Convert number to string
             formData.append('keywords', String(keywordsArray));  // Convert array to JSON string

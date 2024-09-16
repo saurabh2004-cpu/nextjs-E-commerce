@@ -5,6 +5,7 @@ import { IProduct } from "./product.models";
 export interface IOrderItem {
     product: mongoose.Schema.Types.ObjectId;
     quantity: number;
+    price:number
 }
 
 export interface IOrder extends Document {
@@ -29,6 +30,9 @@ const OrderSchema: Schema<IOrder> = new Schema({
         quantity: {
             type: Number,
             required: true
+        },
+        price:{
+            type:Number
         }
     }],
     total: {

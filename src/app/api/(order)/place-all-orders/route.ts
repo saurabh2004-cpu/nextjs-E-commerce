@@ -20,7 +20,12 @@ export async function POST(req: NextRequest) {
 
     try {
         // Fetch the user's cart
-        const cart = await CartModel.findOne({ user: userId }).populate({path:'items.product',model:ProductModel});
+        const cart = await CartModel.findOne({ user: userId }).populate({
+            path:'items.product',
+            model:ProductModel,
+            select: 'price' 
+        });
+
         if (!cart || cart.items.length === 0) {
             return NextResponse.json(new ApiResponse(404, null, "Cart is empty"), { status: 404 });
         }
@@ -29,7 +34,7 @@ export async function POST(req: NextRequest) {
         const orderItems = cart.items.map(item => ({
             product: item.product._id,
             quantity: item.quantity,
-            price: item.product.price,
+            price:(item.product as any).price,
         }));
 
         const total = orderItems.reduce((acc, item) => acc + item.quantity * item.price, 0);

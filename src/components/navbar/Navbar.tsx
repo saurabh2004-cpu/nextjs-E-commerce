@@ -3,7 +3,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Search, User, ShoppingCart, Store, MoreVertical, Box, Heart, Gift, Star, Loader2 } from 'lucide-react'
+import { Search, User, ShoppingCart, Store, MoreVertical, Box, Heart, Gift, Star, Loader2, LucideIcon } from 'lucide-react'
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import {
@@ -21,18 +21,24 @@ import { setUser } from "@/app/(frontend)/store/userSlice"
 import { useRouter } from "next/navigation"
 import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
+import { RootState } from "@/app/(frontend)/store/store"
 
+
+interface UserData{
+  username?: string; 
+}
 
 const Navbar = () => {
+
   const [loading, setloading] = useState(false)
   const { data: session } = useSession()
-  const [userData, setUserData] = useState()
+  const [userData, setUserData] =  useState<UserData>({})
   const [authorized,setAuthorized] = useState(false)
   const dispatch = useDispatch()
   const router = useRouter()
   const user = session?.user;
 
-  const userFromStore = useSelector(state=>state.user.userData)
+  const userFromStore = useSelector((state:RootState)=>state.user.userData)
   console.log("userdata",userFromStore)
 
 
@@ -47,7 +53,7 @@ const Navbar = () => {
     }
   }, [user,userFromStore])
 
-  
+  useEffect(() => {
   const fetchCurrentUserDetails = async () => {
     NProgress.start();
     const response = await axiosInstance.get('http://localhost:3000/api/current-user')
@@ -62,13 +68,12 @@ const Navbar = () => {
     console.log("current user", response.data.data)
     NProgress.done();
   }
-  useEffect(() => {
 
     if(authorized===true && userFromStore=== null  ){
       fetchCurrentUserDetails() 
     }
     console.log("unauthorized")
-  }, [user,userFromStore,authorized])
+  }, [user,userFromStore,authorized,dispatch])
 
   const handleLogin = () => {
    if(!user){
@@ -180,7 +185,13 @@ const Navbar = () => {
   )
 }
 
-const DropdownItem = ({ href, icon: Icon, label }) => {
+interface DropdownItemProps {
+  href: string;
+  icon: LucideIcon;
+  label: string;
+}
+
+const DropdownItem:React.FC<DropdownItemProps>  = ({ href, icon: Icon, label }) => {
   return (
     <li>
       <Link href={href} className="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 p-2 rounded">

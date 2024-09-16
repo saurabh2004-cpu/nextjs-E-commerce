@@ -29,7 +29,7 @@ interface WishlistItem {
 const ListWishlist = () => {
     const [wishlist, setWishlist] = useState<WishlistItem[]>([]); // Set the wishlist type
     const session =useSession()
-    const user =session.user
+    // const user =session.user
 
     const router = useRouter();
 

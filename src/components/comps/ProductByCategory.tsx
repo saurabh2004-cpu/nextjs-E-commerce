@@ -4,19 +4,32 @@ import axiosInstance from '@/app/(frontend)/services/api';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { set_products } from '@/app/(frontend)/store/homeProductSlice';
-import { stat } from 'fs';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-const ProductByCategory = ({ category, heading }) => {
+interface ProductByCategoryProps{
+  category:string;
+  heading:string;
+}
+
+interface Product{
+  _id:string;
+  imageUrl:string;
+  name:string;
+  price:number
+
+}
+
+
+
+const ProductByCategory:React.FC<ProductByCategoryProps> = ({ category, heading }) => {
 
 
   // const category = 'mobile';
 
-  const [products, setProducts] = useState(null); // Change initial state to null for better checking
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [error, setError] = useState(null); // Add error state
+  const [products, setProducts] = useState<Product[]>([]);  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const router = useRouter()
 
   const { data: session, status } = useSession();

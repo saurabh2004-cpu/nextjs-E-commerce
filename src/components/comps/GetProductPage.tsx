@@ -7,12 +7,9 @@ import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import { Heart, Loader2 } from 'lucide-react';
 import Navbar from '../navbar/Navbar';
-import { addItemToWishlist, removeItemFromWishlist, setWishlist } from '@/app/(frontend)/store/wishlistSlice';
-import { useDispatch, useSelector } from 'react-redux';
 import PostReviewAndRatings from './PostReviewAndRatings';
 import ListAllReviews from './ListAllReviews';
 import { toast } from '../ui/use-toast';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 
 interface Product {
@@ -24,13 +21,21 @@ interface Product {
     [key: string]: any;
 }
 
+interface WishlistItem {
+    product: {
+        _id: string;
+        [key: string]: any; 
+    };
+    
+}
+
 const GetProductPage = () => {
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isAddedToWishList, setIsAddedToWishList] = useState(false);
-    const dispatch = useDispatch();
-    
+    // const dispatch = useDispatch();
+
 
 
     // const wishlistItems = useSelector((state) => state.wishlist.items);
@@ -39,47 +44,49 @@ const GetProductPage = () => {
     const searchParams = useSearchParams();
     const productId = searchParams.get('productId');
 
-    const fetchProduct = async () => {
-        if (!productId) {
-            setError("Product ID is missing");
-            setLoading(false);
-            return;
-        }
-
-        try {
-            NProgress.start();
-            const response = await axiosInstance.get(`/api/get-product?productId=${productId}`);
-            if (response.data && response.data.data) {
-                setProduct(response.data.data);
-            } else {
-                setError("No product data found");
-            }
-        } catch (error) {
-            setError("Error while fetching product");
-        } finally {
-            setLoading(false);
-            NProgress.done();
-        }
-    };
-
-    const fetchWishlist = async () => {
-        try {
-            const response = await axiosInstance.get('/api/get-wishlist');
-            if (!response) {
-                console.error("No response from the wishlist API");
+    useEffect(() => {
+        const fetchProduct = async () => {
+            if (!productId) {
+                setError("Product ID is missing");
+                setLoading(false);
                 return;
             }
-            const isProductInWishlist = response.data.data.items.some(item => item.product._id === productId);
-            dispatch(setWishlist(response.data.data.items.map(item => item.product)));
-            console.log(response.data.data);
 
-            setIsAddedToWishList(isProductInWishlist);
-        } catch (error) {
-            console.log("wishlist is empty");
-        }
-    };
+            try {
+                NProgress.start();
+                const response = await axiosInstance.get(`/api/get-product?productId=${productId}`);
+                if (response.data && response.data.data) {
+                    setProduct(response.data.data);
+                } else {
+                    setError("No product data found");
+                }
+            } catch (error) {
+                setError("Error while fetching product");
+            } finally {
+                setLoading(false);
+                NProgress.done();
+            }
+        };
 
-    useEffect(() => {
+        const fetchWishlist = async () => {
+            try {
+                const response = await axiosInstance.get('/api/get-wishlist');
+                if (!response) {
+                    console.error("No response from the wishlist API");
+                    return;
+                }
+
+                const wishlistItems: WishlistItem[] = response.data.data.items; 
+                const isProductInWishlist = wishlistItems.some(item => item.product._id === productId);
+                
+                console.log(response.data.data);
+
+                setIsAddedToWishList(isProductInWishlist);
+            } catch (error) {
+                console.log("wishlist is empty");
+            }
+        };
+
         if (productId) {
             fetchProduct();
             fetchWishlist();
@@ -99,9 +106,8 @@ const GetProductPage = () => {
                 const response = await axiosInstance.post('/api/remove-from-wishlist', { productId });
                 if (response.status === 200) {
                     console.log("Product removed successfully", response.data.data);
-                    dispatch(removeItemFromWishlist(response.data.data._id));
                     setIsAddedToWishList(false);
-                    fetchWishlist();
+                    // fetchWishlist();
                 } else {
                     console.error("Unexpected response while removing product from wishlist", response);
                 }
@@ -110,8 +116,7 @@ const GetProductPage = () => {
                 if (response.status === 200 || response.status === 201) {
                     console.log(response.data.message);
                     setIsAddedToWishList(true);
-                    dispatch(addItemToWishlist(response.data.data._id));
-                    fetchWishlist();
+                    // fetchWishlist();
                 } else {
                     console.error("Unexpected response while adding product to wishlist", response);
                 }
@@ -140,14 +145,14 @@ const GetProductPage = () => {
         }
     }
 
-    const handleBuyProduct = async(quantity:number)=>{
+    const handleBuyProduct = async (quantity: number) => {
         try {
-            const response  = await axiosInstance.post('/api/create-order',{productId,quantity})
+            const response = await axiosInstance.post('/api/create-order', { productId, quantity })
 
-            if(!response){
+            if (!response) {
                 console.log("no response from api")
             }
-            console.log("buyed",response.data.data)
+            console.log("buyed", response.data.data)
 
             // router.replace('/orders')
 
@@ -178,7 +183,7 @@ const GetProductPage = () => {
                                 "Add To Cart"
                             )}
                         </button>
-                        <button className="bg-orange-500 text-white py-2 px-4 rounded" onClick={()=>handleBuyProduct(1)}>Buy Now</button>
+                        <button className="bg-orange-500 text-white py-2 px-4 rounded" onClick={() => handleBuyProduct(1)}>Buy Now</button>
                     </div>
                 </div>
 
@@ -247,8 +252,8 @@ const GetProductPage = () => {
                         <p className="text-gray-700">{product.description}</p>
                         <a href="#view-more" className="text-blue-600">View all features</a>
                     </div>
-                    <PostReviewAndRatings productId={productId} />
-                    <ListAllReviews productId={productId} averageRating={product.averageRating} totalReviews={product.totalReviews} />
+                    <PostReviewAndRatings productId={productId || ""} />
+                    <ListAllReviews productId={productId || ""} averageRating={product.averageRating} totalReviews={product.totalReviews} />
                 </div>
             </div>
         </>

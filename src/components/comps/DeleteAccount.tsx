@@ -41,10 +41,10 @@ const DeleteAccount = () => {
   return (
     <div className="max-w-xl mx-auto p-6 bg-white border border-gray-300 rounded-lg shadow-lg ">
       <h2 className="text-2xl font-bold text-red-600 mb-4">We are sorry to see you go!</h2>
-      <p className="mb-2">Please note that once you choose to delete your account with Flipkart or Shopsy ("Platform"), your account will no longer be available to you and you will not be able to activate, restore or use the account again.</p>
+      <p className="mb-2">Please note that once you choose to delete your account with Flipkart or Shopsy (&quot;Platform&quot;), your account will no longer be available to you and you will not be able to activate, restore or use the account again.</p>
       <p className="mb-4">In case, you are not sure about deleting your account, you may instead deactivate your account...</p>
       <ul className="list-disc list-inside mb-4">
-        <li className="mb-2">There are no pending orders, cancellations, returns, refunds or other requests ("Transactions")...</li>
+        <li className="mb-2">There are no pending orders, cancellations, returns, refunds or other requests (&quot;Transactions&quot;)...</li>
         <li className="mb-2">If you hold any subscription or membership, you will lose all benefits and rewards...</li>
         <li className="mb-2">You have exhausted or do not intend to use SuperCoins, Gift Cards or any such reward points...</li>
         <li className="mb-2">... (Add other points as needed)</li>
@@ -61,7 +61,7 @@ const DeleteAccount = () => {
           <label htmlFor="agree" className="text-sm">I have read and agreed to the Terms and Conditions.</label>
         </div>
         <div className="mb-4">
-          <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 mb-1">Please tell us why you're leaving us:</label>
+          <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 mb-1">Please tell us why you&apos;re leaving us:</label>
           <textarea 
             id="feedback" 
             value={feedback} 

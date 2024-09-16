@@ -3,12 +3,12 @@ import { IUser } from "./user.models";
 import { IProduct } from "./product.models"; 
 
 export interface ICartItem {
-  product: mongoose.Schema.Types.ObjectId; // Use mongoose.Schema.Types.ObjectId here
+  product: mongoose.Types.ObjectId; // Use mongoose.Schema.Types.ObjectId here
   quantity: number;
 }
 
 export interface ICart extends Document {
-  user: mongoose.Schema.Types.ObjectId; // Use mongoose.Schema.Types.ObjectId here
+  user: mongoose.Types.ObjectId; // Use mongoose.Schema.Types.ObjectId here
   items: ICartItem[];
 }
 

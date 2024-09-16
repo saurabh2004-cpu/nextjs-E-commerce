@@ -5,10 +5,11 @@ import SellerFooter from '@/components/footer/SellerFooter'
 import Image from 'next/image'
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { RootState } from '../store/store'
 
 const Page = () => {
 
-    const userData = useSelector((state) => state.user.userData);
+    const userData = useSelector((state:RootState) => state.user.userData);
     console.log("userdata",userData)
 
   return (

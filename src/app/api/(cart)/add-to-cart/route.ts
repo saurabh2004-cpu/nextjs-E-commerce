@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
                 cart.items[existingProductIndex].quantity ++;
             } else {
                 // Add the product as a new item if it doesn't exist in the cart
-                cart.items.push({ product: mongoose.Types.ObjectId.createFromHexString(productId), quantity });
+                cart.items.push({ product: new mongoose.Types.ObjectId(productId), quantity });
             }
 
             await cart.save();

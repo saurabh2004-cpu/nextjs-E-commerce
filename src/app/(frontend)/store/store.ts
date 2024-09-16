@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userSlice from './userSlice';
-import wishlistSlice from './wishlistSlice';
 import orderSlice from './orderSlice';
 
 const store = configureStore({
@@ -11,6 +10,7 @@ const store = configureStore({
   }
 });
 
+export type RootState = ReturnType<typeof store.getState>;
 
 
 export default store;

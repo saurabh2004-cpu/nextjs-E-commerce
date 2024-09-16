@@ -1,7 +1,11 @@
 'use client';
 import React, { useState } from 'react';
 
-const SellerNavBar = ({ display }) => {
+interface SellerNavBarProps{
+ display:string 
+}
+
+const SellerNavBar:React.FC<SellerNavBarProps> = ({ display }) => {
   const [showDropdown, setShowDropdown] = useState(null);
 
   const handleMouseEnter = (index: any) => {
