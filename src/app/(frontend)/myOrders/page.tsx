@@ -189,6 +189,8 @@ const Page = () => {
                         <Image
                           src={item.product.imageUrl}
                           alt={item.product.name}
+                          width={20}
+                          height={20}
                           className="w-20 h-20 object-cover rounded-md mr-4"
                         />
                       ) : (

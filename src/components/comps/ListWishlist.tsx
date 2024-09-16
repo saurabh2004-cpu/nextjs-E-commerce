@@ -95,6 +95,8 @@ const ListWishlist = () => {
                                 <Image
                                     src={product.product.imageUrl}
                                     alt={product.product.name}
+                                    width={100}
+                                    height={100}
                                     className="w-full h-full object-cover rounded-md"
                                 />
                             </div>

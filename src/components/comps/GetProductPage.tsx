@@ -174,7 +174,11 @@ const GetProductPage = () => {
                     >
                         <Heart className="h-7 w-7" fill={isAddedToWishList ? 'currentColor' : 'none'} />
                     </div>
-                    <Image src={product.imageUrl} alt={product.name} className="w-full h-auto object-contain" />
+                    <Image src={product.imageUrl}
+                     alt={product.name}
+                     width={100}
+                     height={100}
+                    className="w-full h-auto object-contain" />
                     <div className="flex mt-4 gap-2">
                         <button className="bg-yellow-500 text-white py-2 px-4 rounded" onClick={handleAddToCart}>
                             {loading ? (

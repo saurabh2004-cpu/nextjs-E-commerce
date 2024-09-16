@@ -171,6 +171,8 @@ const Page = () => {
                             <Image
                                 src={item.product.imageUrl}
                                 alt={item.product.name}
+                                width={100}
+                                height={100}
                                 className="w-full md:w-1/5 h-auto object-contain mb-4 md:mb-0"
                                 onClick={() => handleCardClick(item.product._id)}
                             />

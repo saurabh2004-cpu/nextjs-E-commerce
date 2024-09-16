@@ -146,6 +146,8 @@ const Page = () => {
                             <Image
                                 src={product.imageUrl || '/product.jpg'}
                                 alt={product.name}
+                                width={100}
+                                height={48}
                                 className="w-full h-48 object-cover"
                                 onClick={() => handleCardClick(product._id)}
                             />

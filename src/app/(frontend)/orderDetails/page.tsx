@@ -103,7 +103,11 @@ const OrderDetailsPage = () => {
 
                 {items.map((item) => (
                     <div key={item._id} className="flex items-center mb-4">
-                        <Image src={item.product.imageUrl} alt={item.product.name} className="w-20 h-20 object-cover rounded-md mr-4" />
+                        <Image src={item.product.imageUrl} 
+                        alt={item.product.name} 
+                        width={20}
+                        height={20}
+                        className="w-20 h-20 object-cover rounded-md mr-4" />
                         <div className="flex-1">
                             <h3 className="font-semibold text-gray-800">{item.product.name}</h3>
                             <p className="text-gray-500 text-sm">{item.product.description}</p>

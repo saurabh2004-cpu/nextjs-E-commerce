@@ -211,6 +211,8 @@ const Page = () => {
                                                 <Image
                                                     src={imagePreview || product.imageUrl}
                                                     alt="Image Preview"
+                                                    width={50}
+                                                    height={50}
                                                     className="w-50 h-50 object-cover rounded-md"
                                                 />
                                             </div>

@@ -62,6 +62,9 @@ const Navbar = () => {
       console.log("error while fetching current user")
     }
 
+
+    console.log("current user ",response.data.data)
+
     setUserData(response.data.data)
     dispatch(setUser(response.data.data))
 
@@ -73,7 +76,7 @@ const Navbar = () => {
       fetchCurrentUserDetails() 
     }
     console.log("unauthorized")
-  }, [user,userFromStore,authorized,dispatch])
+  }, [user])
 
   const handleLogin = () => {
    if(!user){

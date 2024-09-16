@@ -25,11 +25,9 @@ const MyCarousel = () => {
           {carouselLinks.map((link, index) => (
             <CarouselItem key={index} className="w-full h-full flex-shrink-0">
               <div className={`w-full h-full bg-cover bg-center`} style={{ backgroundImage: `url(${link})` }}>
-                <Image
-                  src='/src/app/img/Screenshot_20240915_093913.png'
+                <img
+                  src={link}
                   alt=""
-                  width={500} // Replace with the actual width of the image
-                  height={300} // Replace with the actual height of the image
                   className='w-full h-full object-cover'
                 />
 

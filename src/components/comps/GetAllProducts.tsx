@@ -104,7 +104,11 @@ const GetAllProducts = () => {
             onClick={() => handleCardClick(product._id)}
           >
             <div className="w-full h-48 flex items-center justify-center  overflow-hidden">
-              <Image src={product.imageUrl} alt={product.name} className="w-full h-full object-contain" />
+              <Image src={product.imageUrl}
+               alt={product.name}
+               width={100}
+               height={100}
+              className="w-full h-full object-contain" />
             </div>
             <div className="p-4 text-center">
               <h3 className="text-m mb-2">{product.name.length > 20 ? product.name.slice(0, 18)  : product.name}</h3>

@@ -127,6 +127,8 @@ const SellerProfile = () => {
                 <Image
                     src={userData.profilePicture}
                     alt="Seller Profile"
+                    width={24}
+                    height={24}
                     className="w-24 h-24 rounded-full object-cover mr-6"
                 />
             );
@@ -254,6 +256,8 @@ const SellerProfile = () => {
                                     <Image
                                         src={product.imageUrl || '/product.jpg'}
                                         alt={product.name}
+                                        width={100}
+                                        height={48}
                                         className="w-full h-48 object-cover"
                                     />
                                     <div className="p-4 text-center">
@@ -290,6 +294,8 @@ const SellerProfile = () => {
                                     <Image
                                         src={product.imageUrl || '/product.jpg'}
                                         alt={product.name}
+                                        width={100}
+                                        height={48}
                                         className="w-full h-48 object-cover"
                                     />
                                     <div className="p-4 text-center">
