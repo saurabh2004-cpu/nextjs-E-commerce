@@ -17,6 +17,9 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
+import Link from "next/link"
+import { signOut } from 'next-auth/react';
+import { clearUser } from '../../store/userSlice';
 
 
 const VerifyOtpPage = () => {
@@ -24,6 +27,7 @@ const VerifyOtpPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   
+
   const searchParams = useSearchParams();
   const phone = searchParams.get('phone');
 
@@ -44,17 +48,21 @@ const VerifyOtpPage = () => {
         const response = await axiosInstance.get(`http://localhost:3000/api/send-otp/${phone}`);
         console.log('otp', response);
 
-        if (!response) {
+        if (!response ) {
           throw new ApiError(400, 'Error while sending OTP to user');
         }
-      } catch (error) {
+      } catch (error:any) {
         console.error('Error while sending OTP:', error);
+
+        
+        setErrorMessage("Error while sending OTP")
         toast({
           title: 'Error',
           description: 'Failed to send OTP',
           variant: 'destructive',
         });
       }
+      await signOut({ redirect :false });
     };
 
     getOtp();
@@ -94,6 +102,7 @@ const VerifyOtpPage = () => {
           <p className="mb-4">Verify OTP</p>
           <p className="mb-4 text-red-500">{errorMessage}</p>
         </div>
+      {errorMessage && <Link href="/"> <Button>Back</Button></Link>}
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

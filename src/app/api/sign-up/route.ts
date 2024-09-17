@@ -12,7 +12,7 @@ export async function POST(request: Request) {
         const existingUser = await UserModel.findOne({phone:phone })
 
         if (existingUser) {
-            return NextResponse.json(new ApiResponse(400,null, "User already registered with this mobile number"), { status: 400 });
+            return NextResponse.json(new ApiResponse(400,false, "User already registered with this mobile number"),{status:400});
         }
 
         const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();

@@ -144,7 +144,7 @@ const Navbar = () => {
                   }
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="p-4 ">
-                  {!userData && <div className="flex justify-between items-center mb-2">
+                  {!session && <div className="flex justify-between items-center mb-2">
                     <span>New customer?</span>
                     <Link href="/sign-up" className="text-blue-600">Sign Up</Link>
                   </div>}

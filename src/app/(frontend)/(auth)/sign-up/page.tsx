@@ -17,6 +17,7 @@ import axios from 'axios';
 const Page = () => {
   const router = useRouter(); // next-navigation
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [signUpError, setSignUpError] = useState('')
 
   // zod implementation
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -38,10 +39,26 @@ const Page = () => {
       const response = await axiosInstance.post(`http://localhost:3000/api/sign-up`, data);
       console.log("signup:", response);
 
+      if(!response){
+        console.log("no response")
+      }
+      
+      // if (response.data.statusCode !== 200 && response.data.statusCode === 400) {
+      //   
+      //   )
+      // }
+
+      toast({ title: 'Sucessfully Registered', });
+
       setIsSubmitting(false);
       router.push('/sign-in'); // Redirect to login page on success
-    } catch (error) {
+
+    } catch (error:any) {
       console.error("Error in signup of user", error);
+
+      setSignUpError(error.response.data.message)
+
+      console.log(error.response.data.message)
 
       toast({
         title: 'SignUp Failed',
@@ -113,6 +130,8 @@ const Page = () => {
                 "Sign Up"
               )}
             </Button>
+
+       <div> {signUpError && <p className='text-red-500'>{signUpError}</p>}</div>
           </form>
         </Form>
         <div className="text-center mt-4">

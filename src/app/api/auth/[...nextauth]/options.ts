@@ -31,6 +31,8 @@ export const authOptions: NextAuthOptions = {
           user.verifyCode = verifyCode;
           user.verifyCodeExpiry = expiryDate;
           await user.save();
+
+          
           
           return {
             id: user._id.toString(), // Ensure id is mapped correctly
