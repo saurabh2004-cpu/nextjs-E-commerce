@@ -172,7 +172,7 @@ const Navbar = () => {
             </NavigationMenuList>
           </NavigationMenu>
           <button className="flex items-center space-x-1 text-gray-600">
-            <a href="/myCart"><ShoppingCart className="h-5 w-5" /></a>
+            <a href="/cart"><ShoppingCart className="h-5 w-5" /></a>
             <div onClick={()=>handleButtonClick("/cart")}><a href="/cart"><span>Cart</span></a></div>
           </button>
           <button className="flex items-center space-x-1 text-gray-600">

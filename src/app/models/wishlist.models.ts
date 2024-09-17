@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document,Types } from "mongoose";
 
 export interface IWishlistItem {
-    product: mongoose.Schema.Types.ObjectId;
+    product: Types.ObjectId;
 }
 
 export interface IWishlist extends Document {
@@ -17,7 +17,7 @@ const wishlistSchema: Schema<IWishlist> = new Schema({
     },
     items: [{
         product: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: 'Product',
             required: true
         },

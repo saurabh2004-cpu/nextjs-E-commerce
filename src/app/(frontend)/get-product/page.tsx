@@ -161,8 +161,15 @@ const GetProductPage = () => {
       router.push("/sign-up")
     }
     try {
+      const response = await axiosInstance.post('/api/create-order', { productId, quantity })
 
-      //a addd buy product api
+      if (!response) {
+        console.log("no response from api")
+      }
+      console.log("buyed", response.data.data)
+
+      toast({ description: "Product sucessfully buyed" });
+      router.replace('/myOrders')
 
     } catch (error) {
       console.error("error while buying the product")
@@ -183,10 +190,10 @@ const GetProductPage = () => {
             <Heart className="h-7 w-7" fill={isAddedToWishList ? 'currentColor' : 'none'} />
           </div>
           <Image src={product.imageUrl}
-           alt={product.name}
-           width={100}
-           height={100}
-          className="w-full bg-gray-100 h-auto object-contain" />
+            alt={product.name}
+            width={100}
+            height={100}
+            className="w-full bg-gray-100 h-auto object-contain" />
           <div className="flex mt-4 gap-2">
             <button className="bg-yellow-500 text-white py-2 px-4 rounded" onClick={handleAddToCart}>
               {loading ? (
@@ -336,7 +343,7 @@ const GetProductPage = () => {
           ) : (
             <p>Product not found or productId is missing.</p>
           )}
-          
+
         </div>
       </div>
     </>

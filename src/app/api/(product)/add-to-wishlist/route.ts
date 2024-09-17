@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
             // Create a new wishlist if it doesn't exist
             wishlist = await WishlistModel.create({
                 user: new mongoose.Types.ObjectId(userId),
-                items: [{ product: new mongoose.Schema.Types.ObjectId(productId) }]  // Correct instantiation here
+                items: [{ product: new mongoose.Types.ObjectId(productId) }]  // Correct instantiation here
             });
         } else {
             const existingProductIndex = wishlist.items.findIndex((item: IWishlistItem) => item.product.toString() === productId);
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
                 return NextResponse.json(new ApiResponse(201, wishlist, "Product already added to wishlist"), { status: 201 });
             } else {
                 // Add the product as a new item if it doesn't exist in the wishlist
-                wishlist.items.push({ product: new mongoose.Schema.Types.ObjectId(productId) });  // Correct instantiation here
+                wishlist.items.push({ product: new mongoose.Types.ObjectId(productId) });  // Correct instantiation here
             }
 
             await wishlist.save();

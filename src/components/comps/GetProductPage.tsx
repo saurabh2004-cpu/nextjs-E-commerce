@@ -24,9 +24,9 @@ interface Product {
 interface WishlistItem {
     product: {
         _id: string;
-        [key: string]: any; 
+        [key: string]: any;
     };
-    
+
 }
 
 const GetProductPage = () => {
@@ -34,8 +34,7 @@ const GetProductPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isAddedToWishList, setIsAddedToWishList] = useState(false);
-    // const dispatch = useDispatch();
-
+    const router = useRouter()
 
 
     // const wishlistItems = useSelector((state) => state.wishlist.items);
@@ -57,6 +56,7 @@ const GetProductPage = () => {
                 const response = await axiosInstance.get(`/api/get-product?productId=${productId}`);
                 if (response.data && response.data.data) {
                     setProduct(response.data.data);
+                    console.log("product",response.data.data)
                 } else {
                     setError("No product data found");
                 }
@@ -76,9 +76,9 @@ const GetProductPage = () => {
                     return;
                 }
 
-                const wishlistItems: WishlistItem[] = response.data.data.items; 
+                const wishlistItems: WishlistItem[] = response.data.data.items;
                 const isProductInWishlist = wishlistItems.some(item => item.product._id === productId);
-                
+
                 console.log(response.data.data);
 
                 setIsAddedToWishList(isProductInWishlist);
@@ -146,6 +146,8 @@ const GetProductPage = () => {
     }
 
     const handleBuyProduct = async (quantity: number) => {
+
+        console.log("clicked")
         try {
             const response = await axiosInstance.post('/api/create-order', { productId, quantity })
 
@@ -154,7 +156,9 @@ const GetProductPage = () => {
             }
             console.log("buyed", response.data.data)
 
-            // router.replace('/orders')
+            router.replace('/orders')
+
+
 
         } catch (error) {
             console.error("error while buying the product")
@@ -175,10 +179,10 @@ const GetProductPage = () => {
                         <Heart className="h-7 w-7" fill={isAddedToWishList ? 'currentColor' : 'none'} />
                     </div>
                     <Image src={product.imageUrl}
-                     alt={product.name}
-                     width={100}
-                     height={100}
-                    className="w-full h-auto object-contain" />
+                        alt={product.name}
+                        width={100}
+                        height={100}
+                        className="w-full h-auto object-contain" />
                     <div className="flex mt-4 gap-2">
                         <button className="bg-yellow-500 text-white py-2 px-4 rounded" onClick={handleAddToCart}>
                             {loading ? (
@@ -187,7 +191,10 @@ const GetProductPage = () => {
                                 "Add To Cart"
                             )}
                         </button>
-                        <button className="bg-orange-500 text-white py-2 px-4 rounded" onClick={() => handleBuyProduct(1)}>Buy Now</button>
+                        <button
+                            className="bg-orange-500 text-white py-2 px-4 rounded"
+                            onClick={() => handleBuyProduct(1)}
+                        >Buy Now</button>
                     </div>
                 </div>
 
@@ -246,7 +253,7 @@ const GetProductPage = () => {
                     {/* Seller Information */}
                     <div className="mt-4">
                         <h3 className="font-bold text-lg">Seller</h3>
-                        <p className="text-gray-700">Trunet Commerce</p>
+                        <p className="text-gray-700">{}</p>
                         <p className="text-gray-600">7 Days Service Center Replacement/Repair</p>
                     </div>
 
