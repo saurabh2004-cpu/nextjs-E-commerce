@@ -63,7 +63,7 @@ export default function SignInForm() {
         });
       }
     } else {
-      router.replace(`/verify-otp?phone=${encodeURIComponent(data.phone)}`);
+      router.push(`/verify-otp?phone=${encodeURIComponent(data.phone)}`);
     }
   };
 

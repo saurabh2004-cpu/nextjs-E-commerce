@@ -6,12 +6,13 @@ import Footer from "@/components/footer/Footer";
 import Categories from "@/components/comps/Categories";
 import Navbar from "@/components/navbar/Navbar";
 import GetAllProducts from "@/components/comps/GetAllProducts";
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from "react";
 
 
 export default function Home() {
 
-  
-
+ 
   return (
     <>
 

@@ -31,25 +31,28 @@ interface UserData{
 const Navbar = () => {
 
   const [loading, setloading] = useState(false)
-  const { data: session } = useSession()
   const [userData, setUserData] =  useState<UserData>({})
   const [authorized,setAuthorized] = useState(false)
   const dispatch = useDispatch()
   const router = useRouter()
+
+  const { data: session } = useSession()
   const user = session?.user;
 
   const userFromStore = useSelector((state:RootState)=>state.user.userData)
   console.log("userdata",userFromStore)
 
+  let username=user?.username
 
   useEffect(() => {
-
     if (user) {
       setAuthorized(true)
+      dispatch(setUser(user))
     }
 
     if(userFromStore){
       setUserData(userFromStore)
+      username=userData?.username
     }
   }, [user,userFromStore])
 
@@ -62,7 +65,6 @@ const Navbar = () => {
       console.log("error while fetching current user")
     }
 
-
     console.log("current user ",response.data.data)
 
     setUserData(response.data.data)
@@ -72,11 +74,15 @@ const Navbar = () => {
     NProgress.done();
   }
 
-    if(authorized===true && Object.keys(userFromStore).length === 0 ){
+    if(authorized===true ){
       fetchCurrentUserDetails() 
     }
+
+
     console.log("unauthorized")
   }, [user])
+
+  
 
   const handleLogin = () => {
    if(!user || !userData || !authorized){
@@ -140,7 +146,7 @@ const Navbar = () => {
                 <NavigationMenuTrigger className="flex items-center space-x-1 text-gray-600">
                   <User className="h-5 w-5" />
                   {loading && <Loader2 className="animate-spin" /> ||
-                    <span onClick={handleLogin}>{session?.user && userData?.username || 'login'} </span>
+                    <span onClick={handleLogin}>{session?.user && userData?.username || username || 'login'} </span>
                   }
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="p-4 ">

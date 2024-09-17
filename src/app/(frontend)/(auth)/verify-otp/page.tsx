@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/input-otp"
 import Link from "next/link"
 import { signOut } from 'next-auth/react';
-import { clearUser } from '../../store/userSlice';
 
 
 const VerifyOtpPage = () => {
@@ -61,8 +60,8 @@ const VerifyOtpPage = () => {
           description: 'Failed to send OTP',
           variant: 'destructive',
         });
+        await signOut({ redirect :false });
       }
-      await signOut({ redirect :false });
     };
 
     getOtp();
@@ -80,8 +79,7 @@ const VerifyOtpPage = () => {
       if (response.data.statusCode !== 200) {
         setErrorMessage(response.data.message);
       } else {
-        router.replace('/');
-        
+        router.replace(`/`);
       }
     } catch (error) {
       console.error('Error in OTP verification', error);
