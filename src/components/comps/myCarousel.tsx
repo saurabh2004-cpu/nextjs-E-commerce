@@ -13,9 +13,10 @@ import Image from 'next/image'
 const MyCarousel = () => {
 
   const carouselLinks = [
-    'https://tse2.mm.bing.net/th?id=OIP.c9xCr_QD8JsHRFfNL4ZVqQHaCe&pid=Api&P=0&h=220',
-    'https://tse2.mm.bing.net/th?id=OIP.c9xCr_QD8JsHRFfNL4ZVqQHaCe&pid=Api&P=0&h=220',
-    'https://tse2.mm.bing.net/th?id=OIP.c9xCr_QD8JsHRFfNL4ZVqQHaCe&pid=Api&P=0&h=220',
+    'https://rukminim2.flixcart.com/fk-p-flap/1600/270/image/db2ccb0b7fdeb463.jpg?q=20',
+    'https://rukminim2.flixcart.com/fk-p-flap/1600/270/image/99d92de820037ad5.jpg?q=20',
+    'https://rukminim2.flixcart.com/fk-p-flap/1600/270/image/1252031d8256151d.jpeg?q=20',
+    'https://rukminim2.flixcart.com/fk-p-flap/1600/270/image/0a2052abc3384cac.jpg?q=20',
   ]
 
   return (

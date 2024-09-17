@@ -62,8 +62,18 @@ const SellerFooter = () => {
           <div>
             <h3 className="text-lg mb-4">Download Mobile App</h3>
             <div className="flex justify-center space-x-4 mb-4">
-              <Image src="https://via.placeholder.com/150x50" alt="Google Play" className="h-10" />
-              <Image src="https://via.placeholder.com/150x50" alt="App Store" className="h-10" />
+              {/* <Image
+                src="https://via.placeholder.com/150x50"
+                alt="Google Play"
+                width={10}
+                height={10}
+                className="h-10" />
+              <Image
+                src="https://via.placeholder.com/150x50"
+                alt="App Store"
+                width={10}
+                height={10}
+                className="h-10" /> */}
             </div>
             <h3 className="text-lg mb-4">Stay Connected</h3>
             <div className="flex justify-center space-x-4">

@@ -12,7 +12,8 @@ const EmptyCartCard = () => {
                     <Image
                         src="/path-to-your-image.svg" // Replace with the actual path to the image
                         alt="Empty Cart"
-                        width={1/3}
+                        width={33}
+                        height={33}
                         className="w-1/3 mb-6"
                     />
                     {/* Text */}

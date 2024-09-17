@@ -72,14 +72,14 @@ const Navbar = () => {
     NProgress.done();
   }
 
-    if(authorized===true && userFromStore=== null  ){
+    if(authorized===true && Object.keys(userFromStore).length === 0 ){
       fetchCurrentUserDetails() 
     }
     console.log("unauthorized")
   }, [user])
 
   const handleLogin = () => {
-   if(!user){
+   if(!user || !userData || !authorized){
     router.replace('/sign-in')
    }
   }

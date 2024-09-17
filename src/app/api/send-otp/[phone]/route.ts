@@ -28,6 +28,8 @@ export async function GET(request: Request, { params }: { params: { phone: strin
             throw new ApiError(500, "Missing Twilio configuration");
         }
 
+        console.log("twilio",accountSid,authToken,twilioPhoneNumber)
+
         const message = await client.messages.create({
             body: `Your verification code is ${otp}`,
             from: twilioPhoneNumber,
