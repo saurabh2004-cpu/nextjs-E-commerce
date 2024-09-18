@@ -45,7 +45,7 @@ const ProductByCategory:React.FC<ProductByCategoryProps> = ({ category, heading 
     const fetchProducts = async () => {
 
       try {
-        const response = await axiosInstance.get(`/api/get-products-by-category?category=${category}`);
+        const response = await axiosInstance.get(`api/get-products-by-category?category=${category}`);
         setProducts(response.data.data);
         console.log(response.data.data);
       } catch (error) {
