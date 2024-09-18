@@ -59,7 +59,7 @@ const Navbar = () => {
   useEffect(() => {
   const fetchCurrentUserDetails = async () => {
     NProgress.start();
-    const response = await axiosInstance.get('/api/current-user')
+    const response = await axiosInstance.get('https://localhost:3000/api/current-user')
 
     if (!response) {
       console.log("error while fetching current user")
