@@ -58,7 +58,7 @@ const SellerProfile = () => {
         const fetchCurrentUserDetails = async () => {
             NProgress.start();
             try {
-                const response = await axiosInstance.get('http://localhost:3000/api/current-user');
+                const response = await axiosInstance.get('/api/current-user');
                 if (response) {
                     console.log("Current user", response.data.data);
                     setUserData(response.data.data);
@@ -81,7 +81,7 @@ const SellerProfile = () => {
             NProgress.start();
             setloading(true)
             try {
-                const response = await axiosInstance.get(`http://localhost:3000/api/get-sellers-products?userId=${userData?._id}`);
+                const response = await axiosInstance.get(`/api/get-sellers-products?userId=${userData?._id}`);
                 if (response) {
                     setProductsData(response.data.data);
                 }
@@ -101,7 +101,7 @@ const SellerProfile = () => {
         const fetchFeaturedProducts = async () => {
             setloading(true)
             try {
-                const response = await axiosInstance.get(`http://localhost:3000/api/sellers-featured-products?userId=${userId}`);
+                const response = await axiosInstance.get(`/api/sellers-featured-products?userId=${userId}`);
                 if (response) {
                     console.log("featured Products", response);
                     setFeaturedProductsData(response.data.data);

@@ -132,7 +132,7 @@ const Page = () => {
                 formData.append('clotheColor', data.clotheColor);
             }
     
-            const response = await axiosInstance.post('http://localhost:3000/api/create-product', formData, {
+            const response = await axiosInstance.post('/api/create-product', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

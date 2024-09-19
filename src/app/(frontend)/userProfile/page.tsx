@@ -88,7 +88,7 @@ const ProfileSettings = () => {
 
     console.log(formData)
     try {
-      const response = await axiosInstance.post('http://localhost:3000/api/update-user-details', formData);
+      const response = await axiosInstance.post('/api/update-user-details', formData);
       console.log("response", response.data.data);
       if (!response) {
         console.log("failed to update user details");

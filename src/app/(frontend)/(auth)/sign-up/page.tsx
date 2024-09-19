@@ -36,7 +36,7 @@ const Page = () => {
     console.log(data)
 
     try {
-      const response = await axiosInstance.post(`http://localhost:3000/api/sign-up`, data);
+      const response = await axiosInstance.post(`/api/sign-up`, data);
       console.log("signup:", response);
 
       if(!response){

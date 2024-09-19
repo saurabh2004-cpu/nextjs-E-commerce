@@ -24,7 +24,7 @@ const DeleteAccount = () => {
     }
     setIsSubmitting(true);
     
-    const response = await axiosInstance.post('http://localhost:3000/api/delete-account')
+    const response = await axiosInstance.post('/api/delete-account')
 
     if(!response){
       alert("Err: Internal server error please try again or letter")
