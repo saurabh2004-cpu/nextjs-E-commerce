@@ -44,7 +44,7 @@ const VerifyOtpPage = () => {
 
     const getOtp = async () => {
       try {
-        const response = await axiosInstance.get(`http://localhost:3000/api/send-otp/${phone}`);
+        const response = await axiosInstance.get(`/api/send-otp/${phone}`);
         console.log('otp', response);
 
         if (!response ) {
@@ -73,7 +73,7 @@ const VerifyOtpPage = () => {
     console.log(data);
 
     try {
-      const response = await axiosInstance.post(`http://localhost:3000/api/verify-otp/`,{phone, otp: data.otp});
+      const response = await axiosInstance.post(`/api/verify-otp/`,{phone, otp: data.otp});
       
       console.log('verify-otp:', response);
       if (response.data.statusCode !== 200) {
