@@ -60,7 +60,7 @@ const ProductByCategory:React.FC<ProductByCategoryProps> = ({ category, heading 
   // const sevenProducts = products?.slice(1);
 
   const handleCardClick = (productId:any) => {
-    router.replace(`/get-product?productId=${encodeURIComponent(productId)}`);
+    router.push(`/get-product?productId=${encodeURIComponent(productId)}`);
   };
 
   if (loading) {

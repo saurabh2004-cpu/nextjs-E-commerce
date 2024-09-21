@@ -3,7 +3,7 @@
 import SellerNavBar from '@/components/comps/SellerNavbar';
 import { productSchema } from '@/schemas/productschema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -22,6 +22,7 @@ import axiosInstance from '../services/api';
 // import { Description } from '@radix-ui/react-toast';
 import { toast } from '@/components/ui/use-toast';
 import Image from 'next/image';
+import { Mutation, useMutation } from '@tanstack/react-query';
 
 interface ProductFormData {
     name: string;
@@ -74,78 +75,92 @@ const Page = () => {
         },
     });
 
+
+   
+
+    // Define useMutation hook outside of onSubmit
+    const { mutate,isError,isPending, } = useMutation({
+        mutationFn:  async (formData: FormData) => {
+            setIsSubmitting(true)
+            return await axiosInstance.post('/api/create-product', formData, { headers: {'Content-Type': 'multipart/form-data',},});
+        },
+        onSuccess: (response) => {
+            console.log('Success:', response.data);
+            router.replace(`/get-product?productId=${encodeURIComponent(response.data.data._id)}`);
+        },
+        onError: (error) => {
+            console.error('Error:', error);
+            toast({
+                description:"Error While Creating New Product",
+                variant:'destructive'
+            })
+        },
+        onSettled: () => {
+            setIsSubmitting(false);
+        }
+    });
+    
+    if(isPending){
+        setIsSubmitting(true)
+    }
+
     const onSubmit: SubmitHandler<ProductFormData> = async (data) => {
         setIsSubmitting(true);
-        console.log(data);
-        try {
-            const formData = new FormData();
-    
-            formData.append('name', data.name);
-            formData.append('price', data.price.toString());
-            formData.append('description', data.description);
-            formData.append('category', data.category);
-            formData.append('stock', data.stock.toString());
-            formData.append('keywords', data.keywords);
-            formData.append('highlight', data.highlight);
-    
-            if (!productImage) {
-                toast({ description: "Please select a thumbnail image for the product" });
+
+        const formData = new FormData();
+        formData.append('name', data.name);
+        formData.append('price', data.price.toString());
+        formData.append('description', data.description);
+        formData.append('category', data.category);
+        formData.append('stock', data.stock.toString());
+        formData.append('keywords', data.keywords);
+        formData.append('highlight', data.highlight);
+
+        if (!productImage) {
+            toast({ description: "Please select a thumbnail image for the product" });
+            setIsSubmitting(false);
+            return;
+        }
+        formData.append('imageUrl', productImage);
+
+        // Category-specific fields
+        if (data.category === "mobiles and tablets") {
+            if (!data.color || !data.ram || !data.storage || !data.battery) {
+                toast({ description: "Please fill out all product details" });
                 setIsSubmitting(false);
                 return;
             }
-    
-            formData.append('imageUrl', productImage);
-    
-            // Mobiles and tablets
-            if (data.category === "mobiles and tablets") {
-                if (!data.color || !data.ram || !data.storage || !data.battery) {
-                    toast({ description: "Please fill out all product details" });
-                    setIsSubmitting(false);
-                    return;
-                }
-                formData.append('ram', data.ram.toString());
-                formData.append('storage', data.storage.toString());
-                formData.append('color', data.color);
-                formData.append('battery', data.battery.toString());
-            }
-    
-            // TV and appliances
-            if (data.category === "tv and appliances") {
-                if (!data.displaySize || !data.launchYear || !data.hdTechnology) {
-                    toast({ description: "Please fill out all product details" });
-                    setIsSubmitting(false);
-                    return;
-                }
-                formData.append('displaySize', data.displaySize.toString());
-                formData.append('launchYear', data.launchYear.toString());
-                formData.append('hdTechnology', data.hdTechnology);
-            }
-    
-            // Fashion
-            if (data.category === "fashion") {
-                if (!data.clotheSize || !data.clotheColor) {
-                    toast({ description: "Please fill out all product details" });
-                    setIsSubmitting(false);
-                    return;
-                }
-                formData.append('clotheSize', data.clotheSize);
-                formData.append('clotheColor', data.clotheColor);
-            }
-    
-            const response = await axiosInstance.post('/api/create-product', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-    
-            console.log('Success:', response.data);
-            router.replace(`/get-product?productId=${encodeURIComponent(response.data.data._id)}`);
-        } catch (error) {
-            console.error('Error:', error);
-        } finally {
-            setIsSubmitting(false);
+            formData.append('ram', data.ram.toString());
+            formData.append('storage', data.storage.toString());
+            formData.append('color', data.color);
+            formData.append('battery', data.battery.toString());
         }
+
+        if (data.category === "tv and appliances") {
+            if (!data.displaySize || !data.launchYear || !data.hdTechnology) {
+                toast({ description: "Please fill out all product details" });
+                setIsSubmitting(false);
+                return;
+            }
+            formData.append('displaySize', data.displaySize.toString());
+            formData.append('launchYear', data.launchYear.toString());
+            formData.append('hdTechnology', data.hdTechnology);
+        }
+
+        if (data.category === "fashion") {
+            if (!data.clotheSize || !data.clotheColor) {
+                toast({ description: "Please fill out all product details" });
+                setIsSubmitting(false);
+                return;
+            }
+            formData.append('clotheSize', data.clotheSize);
+            formData.append('clotheColor', data.clotheColor);
+        }
+
+        // Use mutation to submit the form
+        mutate(formData);
     };
+
     
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -22,72 +22,100 @@ import { useRouter } from "next/navigation"
 import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import { RootState } from "@/app/(frontend)/store/store"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { number } from "zod"
 
 
-interface UserData{
-  username?: string; 
+interface UserData {
+  username?: string;
 }
 
 const Navbar = () => {
 
   const [loading, setloading] = useState(false)
-  const [userData, setUserData] =  useState<UserData>({})
-  const [authorized,setAuthorized] = useState(false)
+  const [userData, setUserData] = useState<UserData>({})
+  const [authorized, setAuthorized] = useState(false)
   const dispatch = useDispatch()
   const router = useRouter()
 
   const { data: session } = useSession()
   const user = session?.user;
 
-  const userFromStore = useSelector((state:RootState)=>state.user.userData)
-  console.log("userdata",userFromStore)
+  const userFromStore = useSelector((state: RootState) => state.user.userData)
+  console.log("userdata", userFromStore)
+  let username = user?.username
 
-  let username=user?.username
 
-  useEffect(() => {
-    if (user) {
-      setAuthorized(true)
-      dispatch(setUser(user))
-    }
+  //react queries
 
-    if(userFromStore){
-      setUserData(userFromStore)
-      username=userData?.username
-    }
-  }, [user,userFromStore])
-
-  useEffect(() => {
   const fetchCurrentUserDetails = async () => {
     NProgress.start();
     const response = await axiosInstance.get('/api/current-user')
 
-    if (!response) {
-      console.log("error while fetching current user")
-    }
-
-    console.log("current user ",response.data.data)
-
     setUserData(response.data.data)
     dispatch(setUser(response.data.data))
 
-    console.log("current user", response.data.data)
     NProgress.done();
+
+    return response.data.data
   }
 
-    if(authorized===true ){
-      fetchCurrentUserDetails() 
+
+  const { isLoading, error, data: currentUserData } = useQuery({
+    queryKey: ['currentUserData'],
+    queryFn: fetchCurrentUserDetails,
+    staleTime:10000
+  })
+
+
+  console.log("error", error)
+  console.log("current user ", currentUserData)
+
+
+
+  useEffect(() => {
+    if (user) {
+      setAuthorized(true)
     }
 
+    if (userFromStore) {
+      setUserData(userFromStore)
+      username = userData?.username
+    }
+  }, [user, userFromStore])
 
-    console.log("unauthorized")
-  }, [user])
+  // useEffect(() => {
+  // const fetchCurrentUserDetails = async () => {
+  //   NProgress.start();
+  //   const response = await axiosInstance.get('/api/current-user')
 
-  
+  //   if (!response) {
+  //     console.log("error while fetching current user")
+  //   }
+
+  //   console.log("current user ",response.data.data)
+
+  //   setUserData(response.data.data)
+  //   dispatch(setUser(response.data.data))
+
+  //   console.log("current user", response.data.data)
+  //   NProgress.done();
+  // }
+
+  //   if(authorized===true ){
+  //     fetchCurrentUserDetails() 
+  //   }
+
+
+  //   console.log("unauthorized")
+  // }, [user])
+
+
 
   const handleLogin = () => {
-   if(!user || !userData || !authorized){
-    router.replace('/sign-in')
-   }
+    if (!user || !userData || !authorized) {
+      router.replace('/sign-in')
+    }
   }
 
   const handleSignOut = async () => {
@@ -102,21 +130,23 @@ const Navbar = () => {
   };
 
   const handleButtonClick = (link: string) => {
-    
-    if(authorized===true){
+
+    if (authorized === true) {
       router.push(link)
 
-      if(link ==='/userProfile' ){
+      if (link === '/userProfile') {
         setloading(true)
         router.push(`userProfile?wishlist=${encodeURIComponent('My Wishlist')}`)
         setloading(false)
       }
     }
-    else{
+    else {
       router.push("/sign-up")
     }
 
   }
+
+  // if(isLoading) return <h3>Loading ...</h3>
 
   return (
     <nav className="bg-white shadow-md py-2">
@@ -155,12 +185,12 @@ const Navbar = () => {
                     <Link href="/sign-up" className="text-blue-600">Sign Up</Link>
                   </div>}
                   <ul className="space-y-2 w-60 z-50">
-                    <div onClick={()=>handleButtonClick("/userProfile")}><DropdownItem href="#" icon={User} label="My Profile"  /></div>
-                    <div onClick={()=>handleButtonClick("#")}> <DropdownItem href="#" icon={Star} label="Flipkart Plus Zone" /></div>
-                    <div onClick={()=>handleButtonClick("/myOrders")}> <DropdownItem href="/myOrders" icon={Box} label="Orders" /></div>
-                    <div onClick={()=>handleButtonClick("/userProfile")}> <DropdownItem href="/userProfile" icon={Heart} label="Wishlist" /></div>
-                    <div onClick={()=>handleButtonClick("#")}> <DropdownItem href="#" icon={Gift} label="Rewards" /></div>
-                    <div onClick={()=>handleButtonClick("#")}> <DropdownItem href="#" icon={Gift} label="Gift Cards" /></div>
+                    <div onClick={() => handleButtonClick("/userProfile")}><DropdownItem href="#" icon={User} label="My Profile" /></div>
+                    <div onClick={() => handleButtonClick("#")}> <DropdownItem href="#" icon={Star} label="Flipkart Plus Zone" /></div>
+                    <div onClick={() => handleButtonClick("/myOrders")}> <DropdownItem href="/myOrders" icon={Box} label="Orders" /></div>
+                    <div onClick={() => handleButtonClick("/userProfile")}> <DropdownItem href="/userProfile" icon={Heart} label="Wishlist" /></div>
+                    <div onClick={() => handleButtonClick("#")}> <DropdownItem href="#" icon={Gift} label="Rewards" /></div>
+                    <div onClick={() => handleButtonClick("#")}> <DropdownItem href="#" icon={Gift} label="Gift Cards" /></div>
                     {session?.user && (
                       <li>
                         <button
@@ -179,11 +209,11 @@ const Navbar = () => {
           </NavigationMenu>
           <button className="flex items-center space-x-1 text-gray-600">
             <a href="/cart"><ShoppingCart className="h-5 w-5" /></a>
-            <div onClick={()=>handleButtonClick("/cart")}><a href="/cart"><span>Cart</span></a></div>
+            <div onClick={() => handleButtonClick("/cart")}><a href="/cart"><span>Cart</span></a></div>
           </button>
           <button className="flex items-center space-x-1 text-gray-600">
             <Store className="h-5 w-5" />
-            <div onClick={()=>handleButtonClick("/seller")}><a href="/seller"><span>Become a Seller</span></a></div>
+            <div onClick={() => handleButtonClick("/seller")}><a href="/seller"><span>Become a Seller</span></a></div>
           </button>
           <button className="flex items-center space-x-1 text-gray-600">
             <MoreVertical className="h-5 w-5" />
@@ -200,7 +230,7 @@ interface DropdownItemProps {
   label: string;
 }
 
-const DropdownItem:React.FC<DropdownItemProps>  = ({ href, icon: Icon, label }) => {
+const DropdownItem: React.FC<DropdownItemProps> = ({ href, icon: Icon, label }) => {
   return (
     <li>
       <Link href={href} className="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 p-2 rounded">

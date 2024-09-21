@@ -13,6 +13,7 @@ import ListAllReviews from '@/components/comps/ListAllReviews';
 import { toast } from '@/components/ui/use-toast';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 
 interface Product {
   imageUrl: string;
@@ -32,7 +33,7 @@ interface WishlistItem {
 const GetProductPage = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isAddedToWishList, setIsAddedToWishList] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter()
@@ -44,32 +45,56 @@ const GetProductPage = () => {
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId');
 
+  const fetchProduct = async () => {
+    if (!productId) {
+      setErrorMsg("Product ID is missing");
+      setLoading(false);
+      return;
+    }
+
+    const response = await axiosInstance.get(`/api/get-product?productId=${productId}`);
+    return response.data.data
+  };
+
+  const { isLoading, error, data: productData } = useQuery({
+    queryKey: ['product', productId],
+    queryFn: fetchProduct,
+    staleTime:100000
+  });
+  
+  useEffect(() => {
+    if (productData) {
+      setProduct(productData);
+    }
+  }, [productData]);
+
+
 
 
   useEffect(() => {
 
-    const fetchProduct = async () => {
-      if (!productId) {
-        setError("Product ID is missing");
-        setLoading(false);
-        return;
-      }
+    // const fetchProduct = async () => {
+    //   if (!productId) {
+    //     setErrorMsg("Product ID is missing");
+    //     setLoading(false);
+    //     return;
+    //   }
 
-      try {
-        NProgress.start();
-        const response = await axiosInstance.get(`/api/get-product?productId=${productId}`);
-        if (response.data && response.data.data) {
-          setProduct(response.data.data);
-        } else {
-          setError("No product data found");
-        }
-      } catch (error) {
-        setError("Error while fetching product");
-      } finally {
-        setLoading(false);
-        NProgress.done();
-      }
-    };
+    //   try {
+    //     NProgress.start();
+    //     const response = await axiosInstance.get(`/api/get-product?productId=${productId}`);
+    //     if (response.data && response.data.data) {
+    //       setProduct(response.data.data);
+    //     } else {
+    //       setErrorMsg("No product data found");
+    //     }
+    //   } catch (error) {
+    //     setErrorMsg("Error while fetching product");
+    //   } finally {
+    //     setLoading(false);
+    //     NProgress.done();
+    //   }
+    // };
 
     const fetchWishlist = async () => {
       NProgress.start();
@@ -93,13 +118,12 @@ const GetProductPage = () => {
 
 
     if (productId) {
-      fetchProduct();
       fetchWishlist();
     }
   }, [productId, user]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{errorMsg}</p>;
   if (!product) return <p>No product data available</p>;
 
   const discountAmount = product?.price * 0.25;
