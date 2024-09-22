@@ -1,10 +1,11 @@
-'use client'
+'use client';
 
 import axiosInstance from '@/app/(frontend)/services/api';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 interface Product {
   _id: string;
@@ -14,54 +15,59 @@ interface Product {
 }
 
 const GetAllProducts = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [limit, setLimit] = useState(7);
   const router = useRouter();
 
   const { data: session } = useSession();
   const user = session?.user;
 
   if (!user || !session) {
-    console.log("Not authorized");
+    console.log('Not authorized');
   }
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await axiosInstance.get(`/api/get-all-products?page=${page}&limit=10`);
-      const { products: newProducts = [], totalPages } = response.data.data; // Default to an empty array if newProducts is undefined
-      console.log("All products", response.data.data);
+  const fetchProducts = async ({ pageParam = 1 }) => {
+    const response = await axiosInstance.get(`/api/get-all-products?page=${pageParam}&limit=${limit}`);
 
-      if (!Array.isArray(newProducts)) {
-        throw new Error("Expected newProducts to be an array");
+
+    //this data stored as lastPage 
+    return {
+      products: response.data.data.products,
+      currentPage: response.data.data.currentPage, 
+      totalPages: response.data.data.totalPages,
+    };
+  };
+
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ['products'],
+    queryFn: ({ pageParam = 1 }) => fetchProducts({ pageParam }),
+    getNextPageParam: (lastPage) => {
+      // If the last page has no products, return undefined to stop fetching more pages
+      if (lastPage.products.length === 0 || lastPage.currentPage === lastPage.totalPages) {
+        return undefined;
       }
-
-      setProducts((prevProducts) => [...prevProducts, ...newProducts]);
-      setHasMore(page < totalPages); // Check if there are more pages
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setError("Error fetching products");
-    } finally {
-      setLoading(false);
-    }
-  }, [page]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+      // Otherwise, fetch the next page
+      return lastPage.currentPage + 1;
+    },
+    initialPageParam: 1,
+  });
 
   const handleScroll = useCallback(() => {
     if (
-      window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100 &&
-      hasMore &&
-      !loading
+      window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 100 &&
+      hasNextPage &&
+      !isFetchingNextPage
     ) {
-      setPage((prevPage) => prevPage + 1);
+      fetchNextPage();
     }
-  }, [loading, hasMore]);
+  }, [isFetchingNextPage, hasNextPage]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -72,13 +78,16 @@ const GetAllProducts = () => {
     router.replace(`/get-product?productId=${encodeURIComponent(productId)}`);
   };
 
-  if (loading && page === 1) {
+  if (status === 'pending') {
     return (
-      <div className="flex flex-wrap gap-4 justify-center ">
+      <div className="flex flex-wrap gap-4 justify-center">
         {Array(7)
           .fill('')
           .map((_, index) => (
-            <div key={index} className="w-48 border border-gray-200 rounded-lg overflow-hidden shadow-md bg-white animate-pulse">
+            <div
+              key={index}
+              className="w-48 border border-gray-200 rounded-lg overflow-hidden shadow-md bg-white animate-pulse"
+            >
               <div className="w-full h-48 bg-gray-300"></div>
               <div className="p-4 text-center">
                 <div className="h-4 bg-gray-300 mb-2"></div>
@@ -90,34 +99,40 @@ const GetAllProducts = () => {
     );
   }
 
-  if (error) return <div>{error}</div>;
-  if (!products.length && !loading) return <div>No products found</div>;
+  if (error) return <div>Error fetching products</div>;
+  if (!data?.pages?.length && !isFetchingNextPage) return <div>No products found</div>;
 
   return (
     <div>
       <h2 className="font-bold m-3 p-2 background-black">All Products</h2>
       <div className="flex flex-wrap gap-4 m-4 ml-9">
-        {products.map((product) => (
-          <div
-            key={product._id}
-            className="w-48 border border-gray-200 rounded-lg overflow-hidden shadow-md bg-white"
-            onClick={() => handleCardClick(product._id)}
-          >
-            <div className="w-full h-48 flex items-center justify-center  overflow-hidden">
-              <Image src={product.imageUrl}
-               alt={product.name}
-               width={100}
-               height={100}
-              className="w-full h-full object-contain" />
+        {data.pages.map((page) =>
+          page.products.map((product: Product) => (
+            <div
+              key={product._id}
+              className="w-48 border border-gray-200 rounded-lg overflow-hidden shadow-md bg-white"
+              onClick={() => handleCardClick(product._id)}
+            >
+              <div className="w-full h-48 flex items-center justify-center overflow-hidden">
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  width={100}
+                  height={100}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="p-4 text-center">
+                <h3 className="text-m mb-2">
+                  {product.name.length > 20 ? product.name.slice(0, 18) : product.name}
+                </h3>
+                <p className="text-green-600 text-sm">From ₹{product.price}</p>
+              </div>
             </div>
-            <div className="p-4 text-center">
-              <h3 className="text-m mb-2">{product.name.length > 20 ? product.name.slice(0, 18)  : product.name}</h3>
-              <p className="text-green-600 text-sm">From ₹{product.price}</p>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
-      {loading && <div>Loading more products...</div>}
+      {isFetchingNextPage && <div>Loading more products...</div>}
     </div>
   );
 };
