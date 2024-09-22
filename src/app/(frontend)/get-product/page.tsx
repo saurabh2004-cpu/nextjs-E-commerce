@@ -13,7 +13,7 @@ import ListAllReviews from '@/components/comps/ListAllReviews';
 import { toast } from '@/components/ui/use-toast';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 
 interface Product {
   imageUrl: string;
@@ -32,10 +32,8 @@ interface WishlistItem {
 
 const GetProductPage = () => {
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [isAddedToWishList, setIsAddedToWishList] = useState(false);
-  const dispatch = useDispatch();
   const router = useRouter()
   const { data: session } = useSession()
   const user = session?.user;
@@ -45,90 +43,62 @@ const GetProductPage = () => {
   const searchParams = useSearchParams();
   const productId = searchParams.get('productId');
 
-  const fetchProduct = async () => {
-    if (!productId) {
-      setErrorMsg("Product ID is missing");
-      setLoading(false);
-      return;
-    }
 
+  //fetch product 
+  const fetchProduct = async () => {
     const response = await axiosInstance.get(`/api/get-product?productId=${productId}`);
     return response.data.data
   };
 
-  const { isLoading, error, data: productData } = useQuery({
-    queryKey: ['product', productId],
-    queryFn: fetchProduct,
-    staleTime:100000
-  });
+  //fetch wishlist 
+  const fetchWishlist = async () => {
+    NProgress.start();
+    const response = await axiosInstance.get('/api/get-wishlist');
+    NProgress.done();
+    return response.data.data.items;
+  };
   
+  // const isProductInWishlist = response.data.data.items.some((item: WishlistItem) => item.product._id === productId);
+
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ['productData'],
+        queryFn: fetchProduct,
+        staleTime:10000
+      },
+      {
+        queryKey: ['wishlistData'],
+        queryFn: fetchWishlist,
+        staleTime:10000
+      },
+    ],
+
+    
+  });
+
+  // Extract the data and loading states for each query
+  const productData = results[0].data;
+  const isProductLoading = results[0].isLoading;
+  const productError = results[0].error;
+
+  const wishlistData = results[1].data;
+  const isWishlistLoading = results[1].isLoading;
+  const wishlistError = results[1].error;
+
+
   useEffect(() => {
     if (productData) {
       setProduct(productData);
     }
-  }, [productData]);
 
-
-
-
-  useEffect(() => {
-
-    // const fetchProduct = async () => {
-    //   if (!productId) {
-    //     setErrorMsg("Product ID is missing");
-    //     setLoading(false);
-    //     return;
-    //   }
-
-    //   try {
-    //     NProgress.start();
-    //     const response = await axiosInstance.get(`/api/get-product?productId=${productId}`);
-    //     if (response.data && response.data.data) {
-    //       setProduct(response.data.data);
-    //     } else {
-    //       setErrorMsg("No product data found");
-    //     }
-    //   } catch (error) {
-    //     setErrorMsg("Error while fetching product");
-    //   } finally {
-    //     setLoading(false);
-    //     NProgress.done();
-    //   }
-    // };
-
-    const fetchWishlist = async () => {
-      NProgress.start();
-      try {
-        const response = await axiosInstance.get('/api/get-wishlist');
-
-        if (!response) {
-          console.error("No response from the wishlist API");
-          return;
-        }
-        const isProductInWishlist = response.data.data.items.some((item: WishlistItem) => item.product._id === productId);
-
-        setIsAddedToWishList(isProductInWishlist);
-      } catch (error: any) {
-        console.log("error ", error.message);
-      } finally {
-        setLoading(false);
-        NProgress.done();
-      }
-    };
-
-
-    if (productId) {
-      fetchWishlist();
+    if (wishlistData) {
+      const isInWishlist = wishlistData.some((item: WishlistItem) => item.product._id === productId);
+      setIsAddedToWishList(isInWishlist);
     }
-  }, [productId, user]);
+  }, [productData,wishlistData]);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>{errorMsg}</p>;
-  if (!product) return <p>No product data available</p>;
-
-  const discountAmount = product?.price * 0.25;
-  const newPrice = product?.price + discountAmount;
-
+//add or remove from wishlist
   const handleHaertclick = async () => {
     if (!user) {
       router.push("/sign-up")
@@ -162,8 +132,8 @@ const GetProductPage = () => {
     if (!user) {
       router.push("/sign-up")
     }
-    setLoading(true)
     try {
+      setLoading(true)
       const response = await axiosInstance.post('/api/add-to-cart', { productId, quantity: 1 })
 
       if (!response) {
@@ -176,7 +146,7 @@ const GetProductPage = () => {
       console.error("errior while adding the product in cart", error)
       toast({ description: "Error: Could not add to cart", variant: "destructive" });
     } finally {
-      setLoading(false)
+      setLoading(false); // Stop spinner
     }
   }
 
@@ -201,6 +171,20 @@ const GetProductPage = () => {
     }
   }
 
+
+
+  if (isProductLoading || isWishlistLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (productError || wishlistError) {
+    return <div>Error: {productError?.message || wishlistError?.message}</div>;
+  }
+  if (!product) return <p>No product data available</p>;
+
+  const discountAmount = product?.price * 0.25;
+  const newPrice = product?.price + discountAmount;
+
   return (
     <>
       <Navbar />
@@ -220,7 +204,7 @@ const GetProductPage = () => {
             className="w-full bg-gray-100 h-auto object-contain" />
           <div className="flex mt-4 gap-2">
             <button className="bg-yellow-500 text-white py-2 px-4 rounded" onClick={handleAddToCart}>
-              {loading ? (
+              {loading === true ? (
                 <Loader2 className="animate-spin" />
               ) : (
                 "Add To Cart"

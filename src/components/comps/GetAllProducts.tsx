@@ -44,6 +44,7 @@ const GetAllProducts = () => {
     hasNextPage,
     isFetchingNextPage,
     status,
+
   } = useInfiniteQuery({
     queryKey: ['products'],
     queryFn: ({ pageParam = 1 }) => fetchProducts({ pageParam }),
@@ -56,6 +57,7 @@ const GetAllProducts = () => {
       return lastPage.currentPage + 1;
     },
     initialPageParam: 1,
+    staleTime:100000
   });
 
   const handleScroll = useCallback(() => {
@@ -75,7 +77,7 @@ const GetAllProducts = () => {
   }, [handleScroll]);
 
   const handleCardClick = (productId: string) => {
-    router.replace(`/get-product?productId=${encodeURIComponent(productId)}`);
+    router.push(`/get-product?productId=${encodeURIComponent(productId)}`);
   };
 
   if (status === 'pending') {

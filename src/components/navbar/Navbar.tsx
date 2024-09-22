@@ -18,12 +18,12 @@ import { signOut, useSession } from "next-auth/react"
 import axiosInstance from "@/app/(frontend)/services/api"
 import { useDispatch, useSelector } from "react-redux"
 import { setUser } from "@/app/(frontend)/store/userSlice"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import { RootState } from "@/app/(frontend)/store/store"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { number } from "zod"
+import { useQuery,  } from "@tanstack/react-query"
+import { useDebounceCallback } from 'usehooks-ts'
 
 
 interface UserData {
@@ -37,9 +37,10 @@ const Navbar = () => {
   const [authorized, setAuthorized] = useState(false)
   const dispatch = useDispatch()
   const router = useRouter()
-
   const { data: session } = useSession()
   const user = session?.user;
+  const [searchQuery,setSearchQuery] = useState()
+
 
   const userFromStore = useSelector((state: RootState) => state.user.userData)
   console.log("userdata", userFromStore)
@@ -146,6 +147,15 @@ const Navbar = () => {
 
   }
 
+
+  const debounced = useDebounceCallback(setSearchQuery, 300)
+
+
+  const handleSearch = async ()=>{
+    // const response  = await axiosInstance.get(`https://dummyjson.com/products/search?q=${searchQuery}`)
+    // console.log("searched",response)
+  }
+
   // if(isLoading) return <h3>Loading ...</h3>
 
   return (
@@ -165,10 +175,14 @@ const Navbar = () => {
             type="text"
             placeholder="Search for Products, Brands and More"
             className="w-full pl-10 pr-4 py-2 border rounded focus:outline-none focus:ring"
-          // onSubmit={handleSearch}
+            onChange={(event) => {
+              const value = String(event.target.value);
+              // debounced(value);
+              // setSearchQuery(value);
+          }}
           />
         </div>
-        <button type="submit">Search</button>
+        <button onClick={handleSearch}>Search</button>
         <div className="flex items-center space-x-4 z-20">
           <NavigationMenu>
             <NavigationMenuList>
