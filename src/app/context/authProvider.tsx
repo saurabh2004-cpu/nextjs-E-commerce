@@ -21,7 +21,7 @@ export default function AuthProvider({
   return (
    
     <QueryClientProvider client={queryClient}>
-       <ReactQueryDevtools initialIsOpen={false} />
+       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       <Suspense fallback={<div>Loading...</div>}>    {/* //suspense is for use params in client side */}
         <SessionProvider >
           <Provider store={store}>

@@ -3,7 +3,7 @@ import axiosInstance from '@/app/(frontend)/services/api';
 import { reviewSchema } from '@/schemas/reviewAndRatingSchema';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { number, z } from 'zod';
 import {
     Form,
     FormField,
@@ -11,23 +11,24 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
 import { Loader2, Star } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import { useToast } from '../ui/use-toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import ListAllReviews from './ListAllReviews';
 
-interface PostReviewAndRatingsProps{
-    productId:string;
+interface PostReviewAndRatingsProps {
+    productId: string;
 }
 
 const PostReviewAndRatings: React.FC<PostReviewAndRatingsProps> = ({ productId }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [rating, setRating] = useState(0);
-    const router = useRouter();
     const { toast } = useToast();  // Destructure the toast function correctly
+    const queryClient = useQueryClient()
+
 
     if (!productId) {
         console.error("Product ID not found");
@@ -41,6 +42,49 @@ const PostReviewAndRatings: React.FC<PostReviewAndRatingsProps> = ({ productId }
         },
     });
 
+    const postReviewAndRating = async (comment:string) => {
+        const response = await axiosInstance.post(`/api/post-review?productId=${productId}`, {
+            comment: comment,
+            rating: rating,
+        });
+
+        // console.log("post review res",response)
+        form.reset({ rating: 0, comment: '' });
+        setRating(0);
+
+        return response
+
+    }
+
+    const { mutate, isError, isPending, variables } = useMutation({
+        mutationFn: postReviewAndRating,
+
+        onSuccess: async () => {
+            // console.log('Success:', response.data);
+            toast({
+                title: "Review Posted",
+                description: "Your review was successfully posted. Thank you for your feedback!",
+                variant: "default",
+            });
+
+            console.log("pending state on sucess",isPending)
+
+        },
+        onError: (error) => {
+            console.error('Error:', error);
+            toast({
+                title: "Cannot Post Review",
+                description: "Unexpected response from server.",
+                variant: "destructive",
+            });
+
+        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ['review'] }),
+        mutationKey: ['addReview'],
+    })
+
+    console.log("var",variables)
+
     const onSubmit = async (data: z.infer<typeof reviewSchema>) => {
 
         if (!data.rating || !data.comment) {
@@ -51,42 +95,10 @@ const PostReviewAndRatings: React.FC<PostReviewAndRatingsProps> = ({ productId }
             });
             return;
         }
-        
-        setIsSubmitting(true);
-        try {
-            
-            const response = await axiosInstance.post(`/api/post-review?productId=${productId}`, {
-                rating: data.rating,
-                comment: data.comment
-            });
 
-            if (response.status === 200) {
-                toast({
-                    title: "Review Posted",
-                    description: "Your review was successfully posted. Thank you for your feedback!",
-                    variant: "default",
-                });
-                form.reset({ rating: 0, comment: '' });
-                setRating(0);
-                router.refresh();  
-            }
+        mutate(data.comment)
 
-            toast({
-                title: "Cannot Post Review",
-                description: "Unexpected response from server.",
-                variant: "destructive",
-            });
-
-        } catch (error) {
-            // console.error("Error while posting the review", error);
-            toast({
-                title: "Cannot Post Review",
-                description: "You need to purchase this product before posting a review.",
-                variant: "destructive",
-            });
-        } finally {
-            setIsSubmitting(false);
-        }
+        console.log("pending or not ",isPending)
     };
 
 
@@ -94,6 +106,9 @@ const PostReviewAndRatings: React.FC<PostReviewAndRatingsProps> = ({ productId }
         setRating(newRating);
         form.setValue("rating", newRating); // Update the form value for rating
     };
+
+    if(isError) return <p>{isError}</p>
+
 
     return (
         <div className="p-4 bg-white rounded-lg shadow-md">
@@ -151,6 +166,8 @@ const PostReviewAndRatings: React.FC<PostReviewAndRatingsProps> = ({ productId }
                     </Button>
                 </form>
             </Form>
+
+            
         </div>
     );
 };
