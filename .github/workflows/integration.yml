@@ -1,0 +1,56 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Integration # This is the name of the workflow
+
+# Controls when the workflow will run
+# Triggers the workflow on push or pull request events but only for the "main" branch
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - uses: actions/checkout@v4 # Cheout the current repository that is being worked on ,and going to merge it into the main branch
+      - name: Use Node.js ${{ matrix.node-version }} # Setup node version
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: "Install dependencies"
+        run: npm install # Install node dependencies
+
+      - name: "build command"
+        run: npm run build # Build the source code
+
+  unit-test:
+
+    runs-on: ubuntu-latest # Use the latest version of Ubuntu
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - uses: actions/checkout@v4 # Cheout the current repository that is being worked on ,and going to merge it into the main branch
+      - name: Use Node.js ${{ matrix.node-version }} # Setup node version
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: "Install dependencies"
+        run: npm install # Install node dependencies
+
+     
