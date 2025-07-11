@@ -299,7 +299,7 @@ const Page = () => {
                                                 <option value="electronics">Electronics</option>
                                                 <option value="fashion">Fashion</option>
                                                 <option value="beauty">Beauty</option>
-                                                <option value="home and kitchen">Home and Kitchen</option>
+                                                <option value=" and kitchen"> and Kitchen</option>
                                                 <option value="furniture">Furniture</option>
                                                 <option value="travel">Travel</option>
                                                 <option value="grocery">Grocery</option>

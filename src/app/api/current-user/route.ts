@@ -14,6 +14,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
+    
+
     await dbConnect()
     try {
         const currentuser = await UserModel.findById(session.user.id)
@@ -21,6 +23,7 @@ export async function GET(request: NextRequest) {
         if (!currentuser) {
             return NextResponse.json(new ApiResponse(400,null,"user not found"));
         }
+        
 
         return NextResponse.json(new ApiResponse(200,currentuser,"user details fetched successfully"))
     } catch (error) {
