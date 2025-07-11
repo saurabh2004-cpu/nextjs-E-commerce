@@ -1,0 +1,17 @@
+name: Integration # This is the name of the workflow
+
+# Controls when the workflow will run
+# Triggers the workflow on push or pull request events but only for the "main" branch
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4 # Cheout the current repository that is being worked on ,and going to merge it into the main branch
+      - run: docker build . -t saurabh272/next-js-app # Build the source code and upload to docker hub
+      - run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - run: docker push saurabh272/next-js-app:latest

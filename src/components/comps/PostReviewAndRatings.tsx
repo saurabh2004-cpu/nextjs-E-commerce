@@ -166,8 +166,6 @@ const PostReviewAndRatings: React.FC<PostReviewAndRatingsProps> = ({ productId }
                     </Button>
                 </form>
             </Form>
-
-            
         </div>
     );
 };

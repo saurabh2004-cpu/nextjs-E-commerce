@@ -15,7 +15,6 @@ const queryClient = new QueryClient()
 
 export default function AuthProvider({
   children,
-
 }: { children: React.ReactNode }) {
 
   return (

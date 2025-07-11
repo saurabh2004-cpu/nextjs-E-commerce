@@ -1,5 +1,5 @@
-import Redis from "ioredis";
+// import Redis from "ioredis";
 
- let redisClient = new Redis(); 
+//  let redisClient = new Redis(); 
 
-export { redisClient };
+// export { redisClient };

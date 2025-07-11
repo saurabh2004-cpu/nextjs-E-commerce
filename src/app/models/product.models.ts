@@ -30,11 +30,13 @@ export interface IProduct extends Document {
 const ProductSchema: Schema<IProduct> = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     description: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     price: {
         type: Number,
@@ -42,7 +44,8 @@ const ProductSchema: Schema<IProduct> = new Schema({
     },
     category: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     stock: {
         type: Number,
@@ -59,7 +62,8 @@ const ProductSchema: Schema<IProduct> = new Schema({
     keywords: {
         type: [String],
         default: [],
-        required: [true, "add at least one keyword"]
+        required: [true, "add at least one keyword"],
+        index: true
     },
     isAvailable: {
         type: Boolean,
@@ -109,10 +113,6 @@ const ProductSchema: Schema<IProduct> = new Schema({
     clotheColor:{
         type:String,
     },
-
-    //later add more 
-    
-
 
 }, { timestamps: true });
 
